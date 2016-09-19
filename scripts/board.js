@@ -16,14 +16,13 @@ Board.prototype.fill = function() {
       var color = _.sample(this.gem_types);
 
       this.gems.push(new Gem(color, x, y));
-    }  
+    }
   }
 };
 
 Board.prototype.draw = function() {
   _this = this;
   _.each(this.gems, function(gem) {
-    console.log(gem.shape);
     _this.canvas.add(gem.shape);
   })
 }
