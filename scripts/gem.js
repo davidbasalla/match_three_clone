@@ -20,6 +20,8 @@ var Gem = function (color, pos_x, pos_y) {
     height: this.height,
   });
 
+  this.shape.selectable = false;
+
   this.shape.setControlsVisibility({
     mt: false,
     mb: false,
@@ -31,26 +33,14 @@ var Gem = function (color, pos_x, pos_y) {
     tr: false,
     mtr: false,
   });
-
-  // problem here as doesnt seem to update, because its not moving maybe?
-  this.shape.on('mousemove', function(e) {
-    console.log('mousemove on rectangle');
-    console.log(this.mouse_down);
-  });
-
-  this.shape.on('mousedown', function(e) {
-    console.log('mousedown on rectangle');
-    e.target.lockMovementX = true;
-    e.target.lockMovementY = true;
-  });
-
-  this.shape.on('mouseup', function(e) {
-    console.log('mouseup on rectangle');
-    e.target.lockMovementX = false;
-    e.target.lockMovementY = false;
-  });
 };
 
-Gem.prototype.calculate_movement_vector = function() {
 
-}
+// would be cool if rendering the cubes was more declarative...
+
+Gem.prototype.move = function(vector) {
+  this.pos_x += vector[0];
+  this.pos_y += vector[1];
+
+  // this.shape.set({left: this.pos_x * 50, top: this.pos_y * 50})
+};

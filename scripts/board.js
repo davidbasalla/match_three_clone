@@ -26,3 +26,22 @@ Board.prototype.draw = function() {
     _this.canvas.add(gem.shape);
   })
 }
+
+// FIGURE OUT WHY CAN'T MOVE A THING BACK
+Board.prototype.move_gem = function(gem, vector){
+  var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
+  var other_gem = this.find_gem_by_position(new_position);
+
+  gem.move(vector);
+
+  var reverse_vector = [-vector[0], -vector[1]];
+  other_gem.move(reverse_vector);
+
+  this.canvas.renderAll();
+}
+
+Board.prototype.find_gem_by_position = function(position){
+  return _.find(this.gems, function(gem){ 
+    return (gem.pos_x == position[0] && gem.pos_y == position[1]);
+  })
+}
