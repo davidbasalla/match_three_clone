@@ -7,25 +7,11 @@ var Game = function (width, height) {
   this.src_pos = null;
   this.dst_pos = null;
 
-  this.canvas = new fabric.Canvas('c');
-
+  // set up canvas and handlers
   var _this = this;
-
-  this.canvas.on('mouse:down', function(event){
-    _this.src_pos = [event.e.clientX, event.e.clientY]
-    _this.selected_gem = _this.board.find_gem_by_screen_position(_this.src_pos);
-  });
-
-  this.canvas.on('mouse:up', function(event){
-    _this.dst_pos = [event.e.clientX, event.e.clientY];
-
-    var move_vector = _this.calculate_move_vector();
-    if(_this.selected_gem && move_vector){
-      _this.board.move_gem(_this.selected_gem, move_vector);
-    }
-
-    _this.selected_gem = null;
-  });
+  this.canvas = new fabric.Canvas('c');
+  this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
+  this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
   this.board = new Board(this.width, this.height, this.canvas);
 };
@@ -36,6 +22,22 @@ Game.prototype.start = function(){
 
 Game.prototype.draw = function(){
   this.board.draw();
+}
+
+Game.prototype.handle_mouse_down = function(event){
+  this.src_pos = [event.e.clientX, event.e.clientY]
+  this.selected_gem = this.board.find_gem_by_screen_position(this.src_pos);
+}
+
+Game.prototype.handle_mouse_up = function(event){
+  this.dst_pos = [event.e.clientX, event.e.clientY];
+
+  var move_vector = this.calculate_move_vector();
+  if(this.selected_gem && move_vector){
+    this.board.move_gem(this.selected_gem, move_vector);
+  }
+
+  this.selected_gem = null;
 }
 
 Game.prototype.calculate_move_vector = function(){
