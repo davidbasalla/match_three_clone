@@ -26,7 +26,7 @@ Board.prototype.draw = function() {
   })
 }
 
-Board.prototype.move_gem = function(gem, vector){
+Board.prototype.move_gem = function(gem, vector, check_gem_position=true){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
 
@@ -35,12 +35,47 @@ Board.prototype.move_gem = function(gem, vector){
   var reverse_vector = [-vector[0], -vector[1]];
   other_gem.move(reverse_vector);
 
+  if (this.gem_matches(gem) || this.gem_matches(other_gem)) {
+    console.log("Valid move");
+    // start triggering gem elimination here
+  }
+  else {
+    console.log("Not valid, reversing");
+    this.move_gem(gem, reverse_vector, false);
+  };
+
   this.canvas.renderAll();
+}
+
+Board.prototype.gem_matches = function(gem){
+  var positions = [
+    [[gem.pos_x + 1, gem.pos_y], [gem.pos_x + 2, gem.pos_y]],
+    [[gem.pos_x - 1, gem.pos_y], [gem.pos_x + 1, gem.pos_y]],
+    [[gem.pos_x - 2, gem.pos_y], [gem.pos_x - 1, gem.pos_y]],
+    [[gem.pos_x, gem.pos_y + 1], [gem.pos_x, gem.pos_y + 2]],
+    [[gem.pos_x, gem.pos_y - 1], [gem.pos_x, gem.pos_y + 1]],
+    [[gem.pos_x, gem.pos_y - 2], [gem.pos_x, gem.pos_y - 1]]
+  ];
+
+  for(var i = 0; i < 6; i++){
+    if (this.gem_match_permuation(gem, positions[i])) { 
+      return true; 
+    }
+  }
+  return false;
+}
+
+Board.prototype.gem_match_permuation = function(gem, positions) {
+  var second_gem = this.find_gem_by_position(positions[0]);
+  var third_gem = this.find_gem_by_position(positions[1]);
+
+  if(second_gem == undefined || third_gem == undefined){ return false }
+  if(gem.color === second_gem.color && gem.color === third_gem.color){ return true }
 }
 
 Board.prototype.find_gem_by_screen_position = function(position){
   var normalised_pos = [Math.floor(position[0]/50), Math.floor(position[1]/50)];
-  return this.find_gem_by_position(normalised_pos)
+  return this.find_gem_by_position(normalised_pos);
 }
 
 Board.prototype.find_gem_by_position = function(position){
