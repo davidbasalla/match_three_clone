@@ -13,34 +13,14 @@ var Game = function (width, height) {
 
   this.canvas.on('mouse:down', function(event){
     _this.src_pos = [event.e.clientX, event.e.clientY]
-
-    // event.target.lockMovementX = true;
-    // event.target.lockMovementY = true;
-
-    // seems like target does not update once it's been swapped once
-    // could get around it by doing a lookup based on position...
-
-    var selected_shape = event.target;
-
-    console.log(event.target);
-
-    _this.selected_gem = _.find(_this.board.gems, function(gem){ 
-      return gem.shape == selected_shape; 
-    });
+    _this.selected_gem = _this.board.find_gem_by_screen_position(_this.src_pos);
   });
 
   this.canvas.on('mouse:up', function(event){
     _this.dst_pos = [event.e.clientX, event.e.clientY];
 
-    // event.target.lockMovementX = false;
-    // event.target.lockMovementY = false;
-
     var move_vector = _this.calculate_move_vector();
-
     if(_this.selected_gem && move_vector){
-      console.log("UPDATE BOARD!!!");
-      console.log(move_vector);
-      console.log(_this.selected_gem);
       _this.board.move_gem(_this.selected_gem, move_vector);
     }
 

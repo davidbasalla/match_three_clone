@@ -6,7 +6,6 @@ var Board = function (width, height, canvas) {
 
   this.gems = [];
 
-  // fill the board
   this.fill();
 };
 
@@ -27,7 +26,6 @@ Board.prototype.draw = function() {
   })
 }
 
-// FIGURE OUT WHY CAN'T MOVE A THING BACK
 Board.prototype.move_gem = function(gem, vector){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
@@ -38,6 +36,11 @@ Board.prototype.move_gem = function(gem, vector){
   other_gem.move(reverse_vector);
 
   this.canvas.renderAll();
+}
+
+Board.prototype.find_gem_by_screen_position = function(position){
+  var normalised_pos = [Math.floor(position[0]/50), Math.floor(position[1]/50)];
+  return this.find_gem_by_position(normalised_pos)
 }
 
 Board.prototype.find_gem_by_position = function(position){
