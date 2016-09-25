@@ -24,6 +24,10 @@ var Gem = function (color, pos_x, pos_y) {
 };
 
 
+Gem.prototype.position = function() {
+  return [this.pos_x, this.pos_y];
+}
+
 // would be cool if rendering the cubes was more declarative...
 
 Gem.prototype.move = function(vector) {

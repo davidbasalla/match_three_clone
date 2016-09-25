@@ -50,6 +50,7 @@ Board.prototype.move_gem = function(gem, vector, check_gem_position=true){
   this.canvas.renderAll();
 }
 
+// Could extract this to a shape finder class, will take the board as param
 Board.prototype.matching_shapes = function(gems){
   var shapes = [];
 
@@ -66,40 +67,83 @@ Board.prototype.matching_shapes = function(gems){
 
 Board.prototype.matching_shape_for = function(gem){
   var matching_shape = null;
+  var matching_gems = [];
+
+  var horizontal_gems = this.horizontal_matching_gems(gem);
+  if (horizontal_gems.length > 0) {
+    matching_gems = matching_gems.concat(horizontal_gems);
+  }
+
+  var vertical_gems = this.vertical_matching_gems(gem);
+  if (vertical_gems.length > 0) {
+    matching_gems = matching_gems.concat(vertical_gems);
+  }
+
+  if (matching_gems.length > 0){
+    matching_shape = new Shape(_.uniq(matching_gems));
+  }
 
   return matching_shape;
 }
 
-Board.prototype.remove_shapes = function(shapes){
-  _.each(shapes, function(shape){
-    shape.remove();
-  })
-}
+Board.prototype.horizontal_matching_gems = function(gem){
+  var matching_gems = [gem];
 
-Board.prototype.gem_matches = function(gem){
-  var positions = [
-    [[gem.pos_x + 1, gem.pos_y], [gem.pos_x + 2, gem.pos_y]],
-    [[gem.pos_x - 1, gem.pos_y], [gem.pos_x + 1, gem.pos_y]],
-    [[gem.pos_x - 2, gem.pos_y], [gem.pos_x - 1, gem.pos_y]],
-    [[gem.pos_x, gem.pos_y + 1], [gem.pos_x, gem.pos_y + 2]],
-    [[gem.pos_x, gem.pos_y - 1], [gem.pos_x, gem.pos_y + 1]],
-    [[gem.pos_x, gem.pos_y - 2], [gem.pos_x, gem.pos_y - 1]]
-  ];
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 1, 0));
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, -1, 0));
 
-  for(var i = 0; i < 6; i++){
-    if (this.gem_match_permuation(gem, positions[i])) { 
-      return true; 
-    }
+  // clear gems if not more than 3
+  if (matching_gems.length < 3){
+    matching_gems = [];
   }
-  return false;
+
+  return matching_gems;
 }
 
-Board.prototype.gem_match_permuation = function(gem, positions) {
-  var second_gem = this.find_gem_by_position(positions[0]);
-  var third_gem = this.find_gem_by_position(positions[1]);
+Board.prototype.vertical_matching_gems = function(gem){
+  var matching_gems = [gem];
 
-  if(second_gem == undefined || third_gem == undefined){ return false }
-  if(gem.color === second_gem.color && gem.color === third_gem.color){ return true }
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 0, 1));
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 0, -1));
+
+  // clear gems if not more than 3
+  if (matching_gems.length < 3){
+    matching_gems = [];
+  }
+
+  return matching_gems;
+}
+
+Board.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
+  var position = gem.position();
+  var matching_gems = [];
+  position[0] += x_vector;
+  position[1] += y_vector;
+
+  var next_gem = this.find_gem_by_position(position);
+
+  while(next_gem && next_gem.color == gem.color){
+    matching_gems.push(next_gem);
+    position[0] += x_vector;
+    position[1] += y_vector;
+    next_gem = this.find_gem_by_position(position);
+  }
+
+  return matching_gems;
+}
+
+Board.prototype.remove_shapes = function(shapes){
+  // also need to remove the gem from the gems array
+
+  var _this = this;
+  _.each(shapes, function(shape){
+    _.each(shape.gems, function(gem) {
+      var index = _this.gems.indexOf(gem);
+      _this.gems.splice(index, 1);
+
+      _this.canvas.remove(gem.shape);
+    })
+  })
 }
 
 Board.prototype.find_gem_by_screen_position = function(position){
