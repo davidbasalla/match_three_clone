@@ -11,7 +11,13 @@ requirejs.config({
     }
 });
 
-requirejs(["underscore", "fabric", "app/game", "app/board", "app/gem"], function(game, board, gem) {
+requirejs(["underscore", 
+           "fabric",
+           "app/game",
+           "app/board",
+           "app/gem", 
+           "app/shape"], 
+           function(game, board, gem, shape) {
   //This function is called when scripts/helper/util.js is loaded.
   //If util.js calls define(), then this function is not fired until
   //util's dependencies have loaded, and the util argument will hold

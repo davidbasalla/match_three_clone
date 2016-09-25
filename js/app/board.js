@@ -35,16 +35,45 @@ Board.prototype.move_gem = function(gem, vector, check_gem_position=true){
   var reverse_vector = [-vector[0], -vector[1]];
   other_gem.move(reverse_vector);
 
-  if (this.gem_matches(gem) || this.gem_matches(other_gem)) {
-    console.log("Valid move");
-    // start triggering gem elimination here
+  if (check_gem_position) {
+    var matching_shapes = this.matching_shapes([gem, other_gem]);
+    if (matching_shapes.length > 0) {
+      console.log("Valid move");
+      this.remove_shapes(matching_shapes);
+    }
+    else {
+      console.log("Not valid, reversing");
+      this.move_gem(gem, reverse_vector, false);
+    };
   }
-  else {
-    console.log("Not valid, reversing");
-    this.move_gem(gem, reverse_vector, false);
-  };
 
   this.canvas.renderAll();
+}
+
+Board.prototype.matching_shapes = function(gems){
+  var shapes = [];
+
+  var _this = this;
+  _.each(gems, function(gem){
+    var shape = _this.matching_shape_for(gem);
+    if (shape) {
+      shapes.push(shape);
+    }
+  })
+
+  return shapes
+}
+
+Board.prototype.matching_shape_for = function(gem){
+  var matching_shape = null;
+
+  return matching_shape;
+}
+
+Board.prototype.remove_shapes = function(shapes){
+  _.each(shapes, function(shape){
+    shape.remove();
+  })
 }
 
 Board.prototype.gem_matches = function(gem){

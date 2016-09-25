@@ -21,18 +21,6 @@ var Gem = function (color, pos_x, pos_y) {
   });
 
   this.shape.selectable = false;
-
-  this.shape.setControlsVisibility({
-    mt: false,
-    mb: false,
-    ml: false,
-    mr: false,
-    bl: false,
-    br: false,
-    tl: false,
-    tr: false,
-    mtr: false,
-  });
 };
 
 
