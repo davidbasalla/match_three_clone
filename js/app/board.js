@@ -26,7 +26,7 @@ Board.prototype.draw = function() {
   })
 }
 
-Board.prototype.move_gem = function(gem, vector, check_gem_position=true){
+Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
 
@@ -40,10 +40,11 @@ Board.prototype.move_gem = function(gem, vector, check_gem_position=true){
     if (matching_shapes.length > 0) {
       console.log("Valid move");
       this.remove_shapes(matching_shapes);
+      this.refill_board();
     }
     else {
       console.log("Not valid, reversing");
-      this.move_gem(gem, reverse_vector, false);
+      this.swap_gem(gem, reverse_vector, false);
     };
   }
 
@@ -155,4 +156,64 @@ Board.prototype.find_gem_by_position = function(position){
   return _.find(this.gems, function(gem){ 
     return (gem.pos_x == position[0] && gem.pos_y == position[1]);
   })
+}
+
+Board.prototype.refill_board = function(){
+  this.apply_gravity();
+
+  while(this.top_row_has_missing_gems()){
+    this.add_new_gems_to_top();
+    this.apply_gravity();
+  }
+}
+
+Board.prototype.top_row_has_missing_gems = function(){
+  for(var x = 0; x < this.width; x++){
+    gem = this.find_gem_by_position([x, 0]);
+    if (gem == null){
+      return true;
+    }
+  }
+
+  return false;
+}
+
+Board.prototype.add_new_gems_to_top = function(){
+  for(var x = 0; x < this.width; x++){
+    gem = this.find_gem_by_position([x, 0]);
+    if (gem == null){
+      var color = _.sample(this.gem_types);
+      var new_gem = new Gem(color, x, 0);
+
+      this.gems.push(new_gem);
+      this.canvas.add(new_gem.shape);
+    }
+  }
+}
+
+// seems expensive to query each time, should use 2D array for storage
+Board.prototype.apply_gravity = function(){
+  var gem = null;
+  for(var x = 0; x < this.width; x++){
+    for(var y = this.height; y >= 0; y--){
+      gem = this.find_gem_by_position([x, y]);
+      if (gem){
+        while(this.space_below_gem_is_free(gem)){
+          gem.move([0, 1]);
+        }
+      }
+    }
+  }
+}
+
+Board.prototype.space_below_gem_is_free = function(gem){
+  if(gem.pos_y == (this.height - 1)){
+    return false;
+  }
+
+  if(this.find_gem_by_position([gem.pos_x, gem.pos_y + 1])){
+    return false;
+  }
+
+  return true;
 }

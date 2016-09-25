@@ -34,7 +34,7 @@ Game.prototype.handle_mouse_up = function(event){
 
   var move_vector = this.calculate_move_vector();
   if(this.selected_gem && move_vector){
-    this.board.move_gem(this.selected_gem, move_vector);
+    this.board.swap_gem(this.selected_gem, move_vector);
   }
 
   this.selected_gem = null;
