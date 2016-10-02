@@ -26,21 +26,74 @@ Board.prototype.draw = function() {
   })
 }
 
+Board.prototype.move_gem = function(gem, vector, callback_func=null){
+  var move_attr = null;
+  var move_amplitude = null;
+  var vector_x = vector[0];
+  var vector_y = vector[1];
+
+  if (vector_x != 0){
+    move_attr = 'left';
+    if (vector_x > 0){
+      move_amplitude = '+=' + Math.abs(vector_x*50).toString();
+    }
+    else {
+      move_amplitude = '-=' + Math.abs(vector_x*50).toString();
+    }
+  }
+  else {
+    move_attr = 'top';
+    if (vector_y > 0){
+      move_amplitude = '+=' + Math.abs(vector_y*50).toString();
+    }
+    else {
+      move_amplitude = '-=' + Math.abs(vector_y*50).toString();
+    }
+  }
+
+  gem.pos_x += vector_x;
+  gem.pos_y += vector_y;
+  gem.shape.animate(move_attr, move_amplitude, { 
+    onChange: this.canvas.renderAll.bind(this.canvas),
+    onComplete: callback_func,
+    duration: 150,
+  });
+}
+
+Board.prototype.animation_complete = function(gem){
+  console.log("ANIMATION DONE");
+  console.log(gem);
+}
+
+
 Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
 
-  gem.move(vector);
+  // this might have to happen at the same time as the other gem move, like a 
+  // transaction. Could just rely on first shape always completing first...
+  this.move_gem(gem, vector);
 
   var reverse_vector = [-vector[0], -vector[1]];
-  other_gem.move(reverse_vector);
+
+  var _this = this;
+  this.move_gem(other_gem, reverse_vector, function(){
+    _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
+  });
+}
+
+Board.prototype.process_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
+  var _this = this;
 
   if (check_gem_position) {
     var matching_shapes = this.matching_shapes([gem, other_gem]);
     if (matching_shapes.length > 0) {
       console.log("Valid move");
-      this.remove_shapes(matching_shapes);
-      this.refill_board();
+      setTimeout(function(){
+        _this.remove_shapes(matching_shapes);
+        _this.refill_board();
+      },
+      150);
     }
     else {
       console.log("Not valid, reversing");
@@ -53,6 +106,8 @@ Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
 
 // Could extract this to a shape finder class, will take the board as param
 Board.prototype.matching_shapes = function(gems){
+  // return [];
+
   var shapes = [];
 
   var _this = this;
@@ -178,12 +233,18 @@ Board.prototype.top_row_has_missing_gems = function(){
   return false;
 }
 
+Board.prototype.add_new_gem_to_top = function(x){
+  var color = _.sample(this.gem_types);
+  var gem = new Gem(color, x, -1);
+  this.move_gem(gem, [0,1])
+  return gem;
+}
+
 Board.prototype.add_new_gems_to_top = function(){
   for(var x = 0; x < this.width; x++){
     gem = this.find_gem_by_position([x, 0]);
     if (gem == null){
-      var color = _.sample(this.gem_types);
-      var new_gem = new Gem(color, x, 0);
+      var new_gem = this.add_new_gem_to_top(x);
 
       this.gems.push(new_gem);
       this.canvas.add(new_gem.shape);
@@ -199,6 +260,7 @@ Board.prototype.apply_gravity = function(){
       gem = this.find_gem_by_position([x, y]);
       if (gem){
         while(this.space_below_gem_is_free(gem)){
+          // this.move_gem(gem, [0,1]);
           gem.move([0, 1]);
         }
       }
@@ -217,3 +279,4 @@ Board.prototype.space_below_gem_is_free = function(gem){
 
   return true;
 }
+// 
