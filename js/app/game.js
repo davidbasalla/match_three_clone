@@ -1,4 +1,4 @@
-var Game = function (width, height) {
+var Game = function (width, height, map) {
   this.width = width;
   this.height = height;
 
@@ -13,7 +13,7 @@ var Game = function (width, height) {
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
   this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
-  this.board = new Board(this.width, this.height, this.canvas);
+  this.board = new Board(this.width, this.height, this.canvas, map);
 };
 
 Game.prototype.start = function(){

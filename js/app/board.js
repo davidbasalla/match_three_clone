@@ -1,12 +1,19 @@
-var Board = function (width, height, canvas) {
+var Board = function (width, height, canvas, map) {
   this.width = width;
   this.height = height;
   this.canvas = canvas;
+  this.map = map;
+
   this.gem_types = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
 
   this.gems = [];
 
-  this.fill();
+  if (map == null){
+    this.fill();
+  }
+  else {
+    this.load_map();
+  }
 };
 
 Board.prototype.fill = function() {
@@ -18,6 +25,13 @@ Board.prototype.fill = function() {
     }
   }
 };
+
+Board.prototype.load_map = function() {
+  console.log("LOAD MAP");
+  this.height = this.map.height;
+  this.width = this.map.width;
+  this.gems = this.map.gems;
+}
 
 Board.prototype.draw = function() {
   _this = this;

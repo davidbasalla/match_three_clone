@@ -16,8 +16,10 @@ requirejs(["underscore",
            "app/game",
            "app/board",
            "app/gem", 
-           "app/shape"], 
-           function(game, board, gem, shape) {
+           "app/shape",
+           "app/map_parser",
+           "app/map"], 
+           function(game, board, gem, shape, map_parser, map) {
   //This function is called when scripts/helper/util.js is loaded.
   //If util.js calls define(), then this function is not fired until
   //util's dependencies have loaded, and the util argument will hold
@@ -27,7 +29,13 @@ requirejs(["underscore",
 
   var width = 10;
   var height = 10;
+  var map = null;
 
-  var new_game = new Game(width, height);
+  // Uncomment this to load custom map
+  var map_file = new Map;
+  var parser = new MapParser(map_file.map_1());
+  var map = parser.parse();
+
+  var new_game = new Game(width, height, map);
   new_game.start();
 });
