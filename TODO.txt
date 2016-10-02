@@ -3,4 +3,17 @@ TODO.txt
 - investigate writing tests for this
 - think about moving to grid based storage for board, access is expensive currently
 - investigate why move cursor disappears
-- need to add way of resolving matching gems...
+- too messy at the moment
+- need to separate the stages clearly and distinctly
+  - find a way to signal that all animation has stopped
+- currently difficult because of the callback methods
+
+1.) SWAP GEM
+2.) REMOVE MATCHING SHAPES
+
+3.) DROP EXISTING GEMS
+3.) DROP IN NEW GEMS
+4.) CHECK AND REMOVE MATCHING SHAPES
+3.) DROP EXISTING GEMS
+3.) DROP IN NEW GEMS
+4.) CHECK AND REMOVE MATCHING SHAPES

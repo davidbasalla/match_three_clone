@@ -76,12 +76,6 @@ Board.prototype.move_gem = function(gem, vector, callback_func=null){
   });
 }
 
-Board.prototype.animation_complete = function(gem){
-  console.log("ANIMATION DONE");
-  console.log(gem);
-}
-
-
 Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
@@ -134,7 +128,11 @@ Board.prototype.matching_shapes = function(gems){
     }
   })
 
-  return shapes
+  // need to remove duplicate shapes - WIP
+  // could merge combined shapes here
+
+  // return shapes
+  return this.unique_shapes(shapes);
 }
 
 Board.prototype.matching_shape_for = function(gem){
@@ -232,6 +230,8 @@ Board.prototype.refill_board = function(){
   this.apply_gravity(function(){
     if(_this.top_row_has_missing_gems()){
       _this.add_new_gems_to_top(function(){
+        // Remove shapes that have matched because of the drop
+        _this.remove_shapes(_this.matching_shapes(_this.gems));
         _this.refill_board();
       });
     }
@@ -324,3 +324,29 @@ Board.prototype.space_below_is_free = function(position){
   return true;
 }
 
+Board.prototype.unique_shapes = function(shapes){
+  var unique_shapes = []
+
+  var _this = this;
+  _.each(shapes, function(shape){
+    console.log('Checking:')
+    console.log(shape)
+    if(!_this.shape_included_in_shapes(shape, unique_shapes)){
+      unique_shapes.push(shape);
+    }
+  })
+
+  console.log('UNIQUE SHAPES ARE:')
+  console.log(unique_shapes)
+  return unique_shapes;
+}
+
+Board.prototype.shape_included_in_shapes = function(original_shape, shapes){
+  for(var i = 0; i < shapes.length; i++){
+    if(shapes[i].equals(original_shape)) {
+      return true;
+    }
+  }
+
+  return false;
+}

@@ -22,3 +22,16 @@ Map.prototype.map_2 = function() {
 
   return map;
 };
+
+Map.prototype.map_3 = function() {
+  var map = 
+  [
+    ['G','B','R','G'],
+    ['G','B','R','G'],
+    ['R','G','G','G'],
+    ['G','B','R','G'],
+    ['B','R','B','R'],
+  ];
+
+  return map;
+};

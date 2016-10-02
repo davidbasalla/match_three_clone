@@ -34,5 +34,6 @@ Gem.prototype.move = function(vector) {
   this.pos_x += vector[0];
   this.pos_y += vector[1];
 
+
   this.shape.set({left: this.pos_x * 50, top: this.pos_y * 50})
 };
