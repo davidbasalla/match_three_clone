@@ -1,7 +1,6 @@
 TODO.txt
 
-- set up board states for testing
-  - need to create a board map loader of sorts
 - investigate writing tests for this
 - think about moving to grid based storage for board, access is expensive currently
 - investigate why move cursor disappears
+- need to add way of resolving matching gems...
