@@ -67,10 +67,12 @@ Board.prototype.move_gem = function(gem, vector, callback_func=null){
 
   gem.pos_x += vector_x;
   gem.pos_y += vector_y;
+
+  // duration matches the distance travelled so to have similar speed
   gem.shape.animate(move_attr, move_amplitude, { 
     onChange: this.canvas.renderAll.bind(this.canvas),
     onComplete: callback_func,
-    duration: 150,
+    duration: 150 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
   });
 }
 
@@ -203,8 +205,6 @@ Board.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
 }
 
 Board.prototype.remove_shapes = function(shapes){
-  // also need to remove the gem from the gems array
-
   var _this = this;
   _.each(shapes, function(shape){
     _.each(shape.gems, function(gem) {
@@ -228,12 +228,14 @@ Board.prototype.find_gem_by_position = function(position){
 }
 
 Board.prototype.refill_board = function(){
-  this.apply_gravity();
-
-  while(this.top_row_has_missing_gems()){
-    this.add_new_gems_to_top();
-    this.apply_gravity();
-  }
+  var _this = this;
+  this.apply_gravity(function(){
+    if(_this.top_row_has_missing_gems()){
+      _this.add_new_gems_to_top(function(){
+        _this.refill_board();
+      });
+    }
+  });
 }
 
 Board.prototype.top_row_has_missing_gems = function(){
@@ -247,18 +249,21 @@ Board.prototype.top_row_has_missing_gems = function(){
   return false;
 }
 
-Board.prototype.add_new_gem_to_top = function(x){
-  var color = _.sample(this.gem_types);
-  var gem = new Gem(color, x, -1);
-  this.move_gem(gem, [0,1])
-  return gem;
-}
+Board.prototype.add_new_gems_to_top = function(callback_func){
+  var animating = 0;
 
-Board.prototype.add_new_gems_to_top = function(){
   for(var x = 0; x < this.width; x++){
     gem = this.find_gem_by_position([x, 0]);
     if (gem == null){
-      var new_gem = this.add_new_gem_to_top(x);
+      animating++;
+      var new_gem = this.add_new_gem_to_top(x, function(){
+        animating--;
+        if(animating == 0){
+          console.log('CREATION complete')
+          callback_func();
+          return;
+        }
+      });
 
       this.gems.push(new_gem);
       this.canvas.add(new_gem.shape);
@@ -266,31 +271,56 @@ Board.prototype.add_new_gems_to_top = function(){
   }
 }
 
+Board.prototype.add_new_gem_to_top = function(x, callback_func){
+  var color = _.sample(this.gem_types);
+  var gem = new Gem(color, x, -1);
+  this.move_gem(gem, [0,1], callback_func)
+  return gem;
+}
+
 // seems expensive to query each time, should use 2D array for storage
-Board.prototype.apply_gravity = function(){
+Board.prototype.apply_gravity = function(callback_func){
+  var animating = 0;
+
   var gem = null;
   for(var x = 0; x < this.width; x++){
     for(var y = this.height; y >= 0; y--){
       gem = this.find_gem_by_position([x, y]);
       if (gem){
-        while(this.space_below_gem_is_free(gem)){
-          // this.move_gem(gem, [0,1]);
-          gem.move([0, 1]);
+        if(this.space_below_gem_is_free(gem)){
+          animating++;
+          this.drop_gem(gem, function(){
+            animating--;
+            if(animating == 0){
+              // console.log('ALL GEM ANIMATION complete')
+              callback_func();
+            }
+          })
         }
       }
     }
   }
+  callback_func();
+}
+
+Board.prototype.drop_gem = function(gem, callback_func){
+  var position = gem.position()
+
+  while (this.space_below_is_free(position)){
+    position = [position[0], position[1] + 1]
+  }
+  var drop_by = (position[1] - gem.position()[1])
+
+  this.move_gem(gem, [0, drop_by], callback_func)
 }
 
 Board.prototype.space_below_gem_is_free = function(gem){
-  if(gem.pos_y == (this.height - 1)){
-    return false;
-  }
+  return this.space_below_is_free(gem.position())
+}
 
-  if(this.find_gem_by_position([gem.pos_x, gem.pos_y + 1])){
-    return false;
-  }
-
+Board.prototype.space_below_is_free = function(position){
+  if(position[1] == (this.height - 1)){ return false; }
+  if(this.find_gem_by_position([position[0], position[1] + 1])){ return false; }
   return true;
 }
-// 
+
