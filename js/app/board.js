@@ -74,7 +74,7 @@ Board.prototype.move_gem = function(gem, vector, callback_func=null){
     gem.shape.animate(move_attr, move_amplitude, { 
       onChange: _this.canvas.renderAll.bind(_this.canvas),
       onComplete: resolve,
-      duration: 200 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
+      duration: 100 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
     });
   })
 }
@@ -91,8 +91,7 @@ Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
 
   var _this = this;
   Promise.all(move_promises).then(function(){
-    console.log("ALL ANIM DONE");
-    // _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
+    _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
   })
 }
 
@@ -102,18 +101,11 @@ Board.prototype.process_swap = function(gem, other_gem, reverse_vector, check_ge
   if (check_gem_position) {
     var matching_shapes = this.matching_shapes([gem, other_gem]);
     if (matching_shapes.length > 0) {
-      console.log("Valid move");
-
-      // this should be happening without setTimeout
-      setTimeout(function(){
-        _this.remove_shapes(matching_shapes);
-        // _this.refill_board();
-      },
-      150);
-
+      this.remove_shapes(matching_shapes).then(function(){
+        _this.refill_board();
+      });
     }
     else {
-      console.log("Not valid, reversing");
       this.swap_gem(gem, reverse_vector, false);
     };
   }
@@ -211,13 +203,19 @@ Board.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
 
 Board.prototype.remove_shapes = function(shapes){
   var _this = this;
-  _.each(shapes, function(shape){
-    _.each(shape.gems, function(gem) {
-      var index = _this.gems.indexOf(gem);
-      _this.gems.splice(index, 1);
+  return new Promise(function(resolve, reject){
+    setTimeout(function(){
+      _.each(shapes, function(shape){
+        _.each(shape.gems, function(gem) {
+          var index = _this.gems.indexOf(gem);
+          _this.gems.splice(index, 1);
 
-      _this.canvas.remove(gem.shape);
-    })
+          _this.canvas.remove(gem.shape);
+          resolve()
+        })
+      })
+    },
+    100)
   })
 }
 
@@ -234,18 +232,18 @@ Board.prototype.find_gem_by_position = function(position){
 
 Board.prototype.refill_board = function(){
   var _this = this;
-  this.apply_gravity(function(){
+
+  this.apply_gravity().then(function(){
     if(_this.top_row_has_missing_gems()){
-      _this.add_new_gems_to_top(function(){
-        // Remove shapes that have matched because of the drop
-        setTimeout(function(){
-          _this.remove_shapes(_this.matching_shapes(_this.gems));
+      _this.add_new_gems_to_top()
+        .then(function(){
+          return _this.remove_shapes(_this.matching_shapes(_this.gems));
+        })
+        .then(function(){
           _this.refill_board();
-        },
-        150);
-      });
+        })
     }
-  });
+  })
 }
 
 Board.prototype.top_row_has_missing_gems = function(){
@@ -259,69 +257,79 @@ Board.prototype.top_row_has_missing_gems = function(){
   return false;
 }
 
-Board.prototype.add_new_gems_to_top = function(callback_func){
-  var animating = 0;
+Board.prototype.add_new_gems_to_top = function(){
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var move_promises = []
 
-  for(var x = 0; x < this.width; x++){
-    gem = this.find_gem_by_position([x, 0]);
-    if (gem == null){
-      animating++;
-      var new_gem = this.add_new_gem_to_top(x, function(){
-        animating--;
-        if(animating == 0){
-          console.log('CREATION complete')
-          callback_func();
-          return;
-        }
-      });
-
-      this.gems.push(new_gem);
-      this.canvas.add(new_gem.shape);
-    }
-  }
-}
-
-Board.prototype.add_new_gem_to_top = function(x, callback_func){
-  var color = _.sample(this.gem_types);
-  var gem = new Gem(color, x, -1);
-  this.move_gem(gem, [0,1], callback_func)
-  return gem;
-}
-
-// seems expensive to query each time, should use 2D array for storage
-Board.prototype.apply_gravity = function(callback_func){
-  var animating = 0;
-
-  var gem = null;
-  for(var x = 0; x < this.width; x++){
-    for(var y = this.height; y >= 0; y--){
-      gem = this.find_gem_by_position([x, y]);
-      if (gem){
-        if(this.space_below_gem_is_free(gem)){
-          animating++;
-          this.drop_gem(gem, function(){
-            animating--;
-            if(animating == 0){
-              // console.log('ALL GEM ANIMATION complete')
-              callback_func();
-            }
-          })
+    for(var x = 0; x < _this.width; x++){
+      for(var y = _this.height; y >= 0; y--){
+        gem = _this.find_gem_by_position([x, y]);
+        if (gem == null){
+          move_promises.push(_this.add_new_gem_to_top(x));
         }
       }
     }
-  }
-  callback_func();
+
+    Promise.all(move_promises).then(function(){
+      resolve()
+    })
+  })
 }
 
-Board.prototype.drop_gem = function(gem, callback_func){
-  var position = gem.position()
+Board.prototype.add_new_gem_to_top = function(x){
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var color = _.sample(_this.gem_types);
+    var gem = new Gem(color, x, -1);
 
-  while (this.space_below_is_free(position)){
-    position = [position[0], position[1] + 1]
-  }
-  var drop_by = (position[1] - gem.position()[1])
+    _this.gems.push(gem);
+    _this.canvas.add(gem.shape);
 
-  this.move_gem(gem, [0, drop_by], callback_func)
+    _this.drop_gem(gem).then(function(){
+      resolve()
+    })
+  })
+}
+
+// seems expensive to query each time, should use 2D array for storage
+Board.prototype.apply_gravity = function(){
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var move_promises = [];
+    var gem = null;
+
+    for(var x = 0; x < _this.width; x++){
+      for(var y = _this.height; y >= 0; y--){
+        gem = _this.find_gem_by_position([x, y]);
+        if (gem){
+          if(_this.space_below_gem_is_free(gem)){
+            move_promises.push(_this.drop_gem(gem))
+          }
+        }
+      }
+    }
+
+    Promise.all(move_promises).then(function(){
+      resolve();
+    })
+  })
+}
+
+Board.prototype.drop_gem = function(gem){
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var position = gem.position()
+
+    while (_this.space_below_is_free(position)){
+      position = [position[0], position[1] + 1]
+    }
+    var drop_by = (position[1] - gem.position()[1])
+
+    _this.move_gem(gem, [0, drop_by]).then(function(){
+      resolve();
+    })
+  });
 }
 
 Board.prototype.space_below_gem_is_free = function(gem){
@@ -339,15 +347,11 @@ Board.prototype.unique_shapes = function(shapes){
 
   var _this = this;
   _.each(shapes, function(shape){
-    console.log('Checking:')
-    console.log(shape)
     if(!_this.shape_included_in_shapes(shape, unique_shapes)){
       unique_shapes.push(shape);
     }
   })
 
-  console.log('UNIQUE SHAPES ARE:')
-  console.log(unique_shapes)
   return unique_shapes;
 }
 
