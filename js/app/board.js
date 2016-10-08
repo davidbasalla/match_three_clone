@@ -74,7 +74,7 @@ Board.prototype.move_gem = function(gem, vector, callback_func=null){
     gem.shape.animate(move_attr, move_amplitude, { 
       onChange: _this.canvas.renderAll.bind(_this.canvas),
       onComplete: resolve,
-      duration: 500 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
+      duration: 200 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
     });
   })
 }
@@ -84,21 +84,16 @@ Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
   var other_gem = this.find_gem_by_position(new_position);
   var reverse_vector = [-vector[0], -vector[1]];
 
-  // this might have to happen at the same time as the other gem move, like a 
-  // transaction. Could just rely on first shape always completing first...
-  var _this = this;
-  this.move_gem(gem, vector)
-    .then(function(){
-      return _this.move_gem(other_gem, reverse_vector);
-    })
-    .then(function(){
-      console.log("ALL ANIM DONE");
-    })
+  var move_promises = [
+    this.move_gem(gem, vector),
+    this.move_gem(other_gem, reverse_vector),
+  ];
 
-  // var _this = this;
-  // this.move_gem(other_gem, reverse_vector, function(){
-  //   _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
-  // });
+  var _this = this;
+  Promise.all(move_promises).then(function(){
+    console.log("ALL ANIM DONE");
+    // _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
+  })
 }
 
 Board.prototype.process_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
