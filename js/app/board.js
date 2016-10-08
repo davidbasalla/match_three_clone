@@ -41,55 +41,64 @@ Board.prototype.draw = function() {
 }
 
 Board.prototype.move_gem = function(gem, vector, callback_func=null){
-  var move_attr = null;
-  var move_amplitude = null;
-  var vector_x = vector[0];
-  var vector_y = vector[1];
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var move_attr = null;
+    var move_amplitude = null;
+    var vector_x = vector[0];
+    var vector_y = vector[1];
 
-  if (vector_x != 0){
-    move_attr = 'left';
-    if (vector_x > 0){
-      move_amplitude = '+=' + Math.abs(vector_x*50).toString();
+    if (vector_x != 0){
+      move_attr = 'left';
+      if (vector_x > 0){
+        move_amplitude = '+=' + Math.abs(vector_x*50).toString();
+      }
+      else {
+        move_amplitude = '-=' + Math.abs(vector_x*50).toString();
+      }
     }
     else {
-      move_amplitude = '-=' + Math.abs(vector_x*50).toString();
+      move_attr = 'top';
+      if (vector_y > 0){
+        move_amplitude = '+=' + Math.abs(vector_y*50).toString();
+      }
+      else {
+        move_amplitude = '-=' + Math.abs(vector_y*50).toString();
+      }
     }
-  }
-  else {
-    move_attr = 'top';
-    if (vector_y > 0){
-      move_amplitude = '+=' + Math.abs(vector_y*50).toString();
-    }
-    else {
-      move_amplitude = '-=' + Math.abs(vector_y*50).toString();
-    }
-  }
 
-  gem.pos_x += vector_x;
-  gem.pos_y += vector_y;
+    gem.pos_x += vector_x;
+    gem.pos_y += vector_y;
 
-  // duration matches the distance travelled so to have similar speed
-  gem.shape.animate(move_attr, move_amplitude, { 
-    onChange: this.canvas.renderAll.bind(this.canvas),
-    onComplete: callback_func,
-    duration: 150 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
-  });
+    // duration matches the distance travelled so to have similar speed
+    gem.shape.animate(move_attr, move_amplitude, { 
+      onChange: _this.canvas.renderAll.bind(_this.canvas),
+      onComplete: resolve,
+      duration: 500 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
+    });
+  })
 }
 
 Board.prototype.swap_gem = function(gem, vector, check_gem_position=true){
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.find_gem_by_position(new_position);
+  var reverse_vector = [-vector[0], -vector[1]];
 
   // this might have to happen at the same time as the other gem move, like a 
   // transaction. Could just rely on first shape always completing first...
-  this.move_gem(gem, vector);
-
-  var reverse_vector = [-vector[0], -vector[1]];
-
   var _this = this;
-  this.move_gem(other_gem, reverse_vector, function(){
-    _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
-  });
+  this.move_gem(gem, vector)
+    .then(function(){
+      return _this.move_gem(other_gem, reverse_vector);
+    })
+    .then(function(){
+      console.log("ALL ANIM DONE");
+    })
+
+  // var _this = this;
+  // this.move_gem(other_gem, reverse_vector, function(){
+  //   _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
+  // });
 }
 
 Board.prototype.process_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
@@ -99,11 +108,14 @@ Board.prototype.process_swap = function(gem, other_gem, reverse_vector, check_ge
     var matching_shapes = this.matching_shapes([gem, other_gem]);
     if (matching_shapes.length > 0) {
       console.log("Valid move");
+
+      // this should be happening without setTimeout
       setTimeout(function(){
         _this.remove_shapes(matching_shapes);
-        _this.refill_board();
+        // _this.refill_board();
       },
       150);
+
     }
     else {
       console.log("Not valid, reversing");
@@ -231,8 +243,11 @@ Board.prototype.refill_board = function(){
     if(_this.top_row_has_missing_gems()){
       _this.add_new_gems_to_top(function(){
         // Remove shapes that have matched because of the drop
-        _this.remove_shapes(_this.matching_shapes(_this.gems));
-        _this.refill_board();
+        setTimeout(function(){
+          _this.remove_shapes(_this.matching_shapes(_this.gems));
+          _this.refill_board();
+        },
+        150);
       });
     }
   });
