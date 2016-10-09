@@ -3,6 +3,9 @@ TODO.txt
 - investigate writing tests for this
 - think about moving to grid based storage for board, access is expensive currently
 - investigate why move cursor disappears
+- investigate the bugs, looks like gems drop on top of other gems
+- add animation for disappearing gems?
+- add score for matching gems
 
 1.) SWAP GEM
 2.) REMOVE MATCHING SHAPES

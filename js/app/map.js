@@ -14,6 +14,10 @@ Map.prototype.map_1 = function() {
 Map.prototype.map_2 = function() {
   var map = 
   [
+    ['B'],
+    ['G'],
+    ['R'],
+    ['B'],
     ['R'],
     ['G'],
     ['R'],

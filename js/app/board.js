@@ -40,7 +40,7 @@ Board.prototype.draw = function() {
   })
 }
 
-Board.prototype.move_gem = function(gem, vector, callback_func=null){
+Board.prototype.move_gem = function(gem, vector, delay=0){
   var _this = this;
   return new Promise(function(resolve, reject){
     var move_attr = null;
@@ -71,11 +71,15 @@ Board.prototype.move_gem = function(gem, vector, callback_func=null){
     gem.pos_y += vector_y;
 
     // duration matches the distance travelled so to have similar speed
-    gem.shape.animate(move_attr, move_amplitude, { 
-      onChange: _this.canvas.renderAll.bind(_this.canvas),
-      onComplete: resolve,
-      duration: 100 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
-    });
+
+    setTimeout(function(){
+      gem.shape.animate(move_attr, move_amplitude, { 
+        onChange: _this.canvas.renderAll.bind(_this.canvas),
+        onComplete: resolve,
+        duration: 100 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
+      });
+    },
+    delay)
   })
 }
 
@@ -261,23 +265,28 @@ Board.prototype.add_new_gems_to_top = function(){
   var _this = this;
   return new Promise(function(resolve, reject){
     var move_promises = []
+    var delay = 0;
 
     for(var x = 0; x < _this.width; x++){
       for(var y = _this.height; y >= 0; y--){
         gem = _this.find_gem_by_position([x, y]);
         if (gem == null){
-          move_promises.push(_this.add_new_gem_to_top(x));
+          move_promises.push(_this.add_new_gem_to_top(x, delay));
+          delay += 100;
         }
       }
+      delay = 0;
     }
 
+    // issue here that dropping gems happens all at the same time
+    // any way to delay this somehow? Would need to separate into per columns
     Promise.all(move_promises).then(function(){
       resolve()
     })
   })
 }
 
-Board.prototype.add_new_gem_to_top = function(x){
+Board.prototype.add_new_gem_to_top = function(x, delay){
   var _this = this;
   return new Promise(function(resolve, reject){
     var color = _.sample(_this.gem_types);
@@ -286,7 +295,7 @@ Board.prototype.add_new_gem_to_top = function(x){
     _this.gems.push(gem);
     _this.canvas.add(gem.shape);
 
-    _this.drop_gem(gem).then(function(){
+    _this.drop_gem(gem, delay).then(function(){
       resolve()
     })
   })
@@ -316,7 +325,7 @@ Board.prototype.apply_gravity = function(){
   })
 }
 
-Board.prototype.drop_gem = function(gem){
+Board.prototype.drop_gem = function(gem, delay=0){
   var _this = this;
   return new Promise(function(resolve, reject){
     var position = gem.position()
@@ -326,7 +335,7 @@ Board.prototype.drop_gem = function(gem){
     }
     var drop_by = (position[1] - gem.position()[1])
 
-    _this.move_gem(gem, [0, drop_by]).then(function(){
+    _this.move_gem(gem, [0, drop_by], delay).then(function(){
       resolve();
     })
   });
