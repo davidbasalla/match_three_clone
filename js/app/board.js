@@ -3,6 +3,7 @@ var Board = function (width, height, canvas, map) {
   this.height = height;
   this.canvas = canvas;
   this.map = map;
+  this.score = 0;
 
   this.gem_types = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
 
@@ -215,6 +216,9 @@ Board.prototype.remove_shapes = function(shapes){
           _this.gems.splice(index, 1);
 
           _this.canvas.remove(gem.shape);
+          _this.score += 1
+          document.getElementById('score').innerHTML = _this.score;
+
           resolve()
         })
       })
