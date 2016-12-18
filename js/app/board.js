@@ -218,6 +218,11 @@ Board.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
 
 Board.prototype.remove_shapes = function(shapes){
   var _this = this;
+
+  _.each(shapes, function(shape){
+    _this.set_flashing_animation(shape)
+  })
+
   return new Promise(function(resolve, reject){
     setTimeout(function(){
       _.each(shapes, function(shape){
@@ -233,7 +238,16 @@ Board.prototype.remove_shapes = function(shapes){
         })
       })
     },
-    100)
+    500)
+  })
+}
+
+Board.prototype.set_flashing_animation = function(shape){
+  _.each(shape.gems, function(gem) {
+    gem.shape.animate('opacity', '0', { 
+      onChange: _this.canvas.renderAll.bind(_this.canvas),
+      easing: fabric.util.ease.easeInBounce
+    });
   })
 }
 
