@@ -7,9 +7,11 @@ var Game = function (width, height, map) {
   this.src_pos = null;
   this.dst_pos = null;
 
+  this.CANVAS_ID = 'c'
+
   // set up canvas and handlers
   var _this = this;
-  this.canvas = new fabric.Canvas('c');
+  this.canvas = new fabric.Canvas(this.CANVAS_ID);
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
   this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
@@ -25,12 +27,24 @@ Game.prototype.draw = function(){
 }
 
 Game.prototype.handle_mouse_down = function(event){
-  this.src_pos = [event.e.clientX, event.e.clientY]
+  var element = document.getElementById(this.CANVAS_ID)
+  var canvas_offset = element.getBoundingClientRect();
+
+  this.src_pos = [
+    event.e.clientX - canvas_offset['left'],
+    event.e.clientY - canvas_offset['top']
+  ]
   this.selected_gem = this.board.find_gem_by_screen_position(this.src_pos);
 }
 
 Game.prototype.handle_mouse_up = function(event){
-  this.dst_pos = [event.e.clientX, event.e.clientY];
+  var element = document.getElementById(this.CANVAS_ID)
+  var canvas_offset = element.getBoundingClientRect();
+
+  this.dst_pos = [
+    event.e.clientX - canvas_offset['left'],
+    event.e.clientY - canvas_offset['top']
+  ];
 
   var move_vector = this.calculate_move_vector();
   if(this.selected_gem && move_vector){
