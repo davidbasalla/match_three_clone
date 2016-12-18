@@ -5,7 +5,17 @@ var Board = function (width, height, canvas, map) {
   this.map = map;
   this.score = 0;
 
-  this.gem_types = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+  this.BASIC_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+  this.PASTEL_COLORS = [
+    "#e998b3",
+    "#c2d2e0",
+    "#d69e85",
+    "#f2d299", 
+    "#c7c491",
+    "#bae6d1",
+  ];
+
+  this.gem_types = this.PASTEL_COLORS;
 
   this.gems = [];
 
