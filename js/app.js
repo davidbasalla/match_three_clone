@@ -33,7 +33,7 @@ requirejs(["underscore",
 
   // Uncomment this to load custom map
   var map_file = new Map;
-  var parser = new MapParser(map_file.map_3());
+  var parser = new MapParser(map_file.map_default());
   var map = parser.parse();
 
   var new_game = new Game(width, height, map);

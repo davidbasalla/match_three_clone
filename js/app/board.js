@@ -41,7 +41,16 @@ Board.prototype.load_map = function() {
   console.log("LOAD MAP");
   this.height = this.map.height;
   this.width = this.map.width;
-  this.gems = this.map.gems;
+
+  var counter = 0;
+  for (var x = 0; x < this.width; x++) {
+    for (var y = 0; y < this.height; y++) {
+      var color = this.gem_types[this.map.gem_ids[counter]];
+
+      this.gems.push(new Gem(color, x, y));
+      counter++;
+    }
+  }
 }
 
 Board.prototype.draw = function() {

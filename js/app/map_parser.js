@@ -5,36 +5,16 @@ var MapParser = function (mapfile) {
 };
 
 MapParser.prototype.parse = function() {
-  var gems = [];
-  var gem = null;
+  var gem_ids = [];
 
   for (var x = 0; x < this.width; x++) {
     for (var y = 0; y < this.height; y++) {
-      var coord = this.mapfile[y][x];
-      var identifier = coord[0];
-
-      switch (identifier) {
-        case 'R':
-          gem = new Gem('red', x, y);
-          break;
-        case 'G':
-          gem = new Gem('green', x, y);
-          break;
-        case 'B':
-          gem = new Gem('blue', x, y);
-          break;
-        default:
-          gem = null;
-          break;
-      }
-      if (gem) {
-        gems.push(gem);
-      }
+      gem_ids.push(this.mapfile[y][x]);
     }
   }
 
   return {
-    gems: gems,
+    gem_ids: gem_ids,
     height: this.height,
     width: this.width,
   }
