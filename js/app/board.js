@@ -215,7 +215,9 @@ Board.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
 
   var next_gem = this.find_gem_by_position(position);
 
-  while(next_gem && next_gem.color == gem.color){
+  while(next_gem && 
+        next_gem.color == gem.color &&
+        next_gem.pos_y >= 0){
     matching_gems.push(next_gem);
     position[0] += x_vector;
     position[1] += y_vector;
@@ -278,7 +280,9 @@ Board.prototype.refill_board = function(){
     if(_this.top_row_has_missing_gems()){
       _this.add_new_gems_to_top()
         .then(function(){
-          return _this.remove_shapes(_this.matching_shapes(_this.gems));
+          var filtered_gems = _.reject(_this.gems, function(gem){ return gem.pos_y < 0; });
+
+          return _this.remove_shapes(_this.matching_shapes(filtered_gems));
         })
         .then(function(){
           _this.refill_board();
