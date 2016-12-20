@@ -4,6 +4,7 @@ var Board = function (width, height, canvas, map) {
   this.canvas = canvas;
   this.map = map;
   this.score = 0;
+  this.gem_counter = 0;
 
   this.BASIC_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
   this.PASTEL_COLORS = [
@@ -16,25 +17,12 @@ var Board = function (width, height, canvas, map) {
   ];
 
   this.gem_types = this.PASTEL_COLORS;
+  this.GEM_TYPES_LENGTH = this.gem_types.length;
+
+  }
 
   this.gems = [];
-
-  if (map == null){
-    this.fill();
-  }
-  else {
-    this.load_map();
-  }
-};
-
-Board.prototype.fill = function() {
-  for (var x = 0; x < this.width; x++) {
-    for (var y = 0; y < this.height; y++) {
-      var color = _.sample(this.gem_types);
-
-      this.gems.push(new Gem(color, x, y));
-    }
-  }
+  this.load_map();
 };
 
 Board.prototype.load_map = function() {
@@ -338,7 +326,7 @@ Board.prototype.add_new_gems_to_top = function(){
     var delay = 0;
 
     for(var x = 0; x < _this.width; x++){
-      for(var y = _this.height; y >= 0; y--){
+      for(var y = (_this.height - 1); y >= 0; y--){
         gem = _this.find_gem_by_position([x, y]);
         if (gem == null){
           move_promises.push(_this.add_new_gem_to_top(x, delay));
@@ -359,7 +347,9 @@ Board.prototype.add_new_gems_to_top = function(){
 Board.prototype.add_new_gem_to_top = function(x, delay){
   var _this = this;
   return new Promise(function(resolve, reject){
-    var color = _.sample(_this.gem_types);
+    var color = _this.gem_types[_this.gem_counter % _this.GEM_TYPES_LENGTH];
+    _this.gem_counter += 1;
+
     var gem = new Gem(color, x, -1);
 
     _this.gems.push(gem);
