@@ -7,35 +7,70 @@ h1 {
   
 }
 
+h2 {
+  margin-top: 0px;
+}
+
+img {
+  height: 300px;
+}
+
+#goblin-image{
+  margin-left:10px;
+}
+
+.container {
+  display: flex; /* or inline-flex */
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
 .board {
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 50px;
     width: 500px;
+    height: 500px;
     border: 5px solid #BBBBBB;
     padding: 20px;
     background-color: white;
     box-shadow: 8px 8px grey;
 }
 
-.matched-gems-display {
-  margin-top: 40px;
+.player-display {
+    margin-top: 50px;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 250px;
+    height: 500px;
+    border: 5px solid #BBBBBB;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 8px 8px grey;
 }
 
-.score-display{
-  margin-top: 40px;
+.hitpoint-display {
+  margin-top: 20px;
+}
+
+.hitpoint-title {
+  font-weight: bold;
+  font-size: 19;
+}
+
+.matched-gems-display {
+  margin-top: 10px;
 }
 
 .gem-count {
-  padding-left: 8px;
-  padding-right:8px;
+  padding-left: 2px;
+  padding-right:2px;
 }
 
 .color-box {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 22px;
-  padding-right: 22px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 #gem-type-0-color-box {

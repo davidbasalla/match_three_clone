@@ -1,4 +1,4 @@
-var Board = function (width, height, canvas, map, callback) {
+var Board = function (width, height, canvas, map, callback, turn_callback) {
   this.width = width;
   this.height = height;
   this.canvas = canvas;
@@ -6,6 +6,7 @@ var Board = function (width, height, canvas, map, callback) {
   this.score = 0;
   this.gem_counter = 0;
   this.callback = callback;
+  this.turn_callback = turn_callback;
 
   this.BASIC_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
   this.PASTEL_COLORS = [
@@ -312,11 +313,17 @@ Board.prototype.refill_board = function(){
         .then(function(){
           var filtered_gems = _.reject(_this.gems, function(gem){ return gem.pos_y < 0; });
 
-          return _this.remove_shapes(_this.matching_shapes(filtered_gems));
+          var shapes_to_remove = _this.matching_shapes(filtered_gems)
+          if (shapes_to_remove.length > 0) {
+            return _this.remove_shapes(shapes_to_remove);
+          }
         })
         .then(function(){
           _this.refill_board();
         })
+    }
+    else {
+      _this.turn_callback();
     }
   })
 }
@@ -446,4 +453,15 @@ Board.prototype.shape_included_in_shapes = function(original_shape, shapes){
   }
 
   return false;
+}
+
+Board.prototype.reset_matched_gems = function(){
+  this.matched_gems = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  }
 }

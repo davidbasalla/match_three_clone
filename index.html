@@ -6,46 +6,109 @@
   </head>
   <body>
 
-  <div class="board">
-    <canvas id="c" width="1000" height="500"></canvas>
+  <div class="container">
+  <div class="player-display" id="goblin">
+    <h2>Goblin Warlock</h2>
 
-    <div class="matched-gems-display"> 
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-0-color-box"></span>
-        <span class="gem-count" id="gem-type-0">0</span>
-      </span>
+    <img src="assets/images/goblin.png" id="goblin-image">
 
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-1-color-box"></span>
-        <span class="gem-count" id="gem-type-1">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-2-color-box"></span>
-        <span class="gem-count" id="gem-type-2">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-3-color-box"></span>
-        <span class="gem-count" id="gem-type-3">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-4-color-box"></span>
-        <span class="gem-count" id="gem-type-4">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-5-color-box"></span>
-        <span class="gem-count" id="gem-type-5">0</span>
-      </span>
+    <div class="hitpoint-display">
+      <span class="hitpoint-title">Hitpoints:</span>
+      <span id="hitpoint-display-goblin">0</span>
     </div>
 
-    <div class="score-display"> 
-      Score: 
-      <span id="score">0</span>
+    <div class="matched-gems-display-display">
+      <h3>Gems</h3>
+
+      <div class="matched-gems-display"> 
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-0-color-box"></span>
+          <span class="gem-count" id="gem-type-0-goblin">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-1-color-box"></span>
+          <span class="gem-count" id="gem-type-1-goblin">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-2-color-box"></span>
+          <span class="gem-count" id="gem-type-2-goblin">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-3-color-box"></span>
+          <span class="gem-count" id="gem-type-3-goblin">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-4-color-box"></span>
+          <span class="gem-count" id="gem-type-4-goblin">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-5-color-box"></span>
+          <span class="gem-count" id="gem-type-5-goblin">0</span>
+        </span>
+      </div>
+
     </div>
   </div>
 
+  <div class="board">
+    <canvas id="c" width="1000" height="500"></canvas>
+  </div>
+
+  <div class="player-display" id="mage">
+    <h2>Fire Mage</h2>
+
+    <img src="assets/images/mage.jpg" id="mage-image">
+
+    <div class="hitpoint-display">
+      <span>
+        <span class="hitpoint-title">Hitpoints:</span>
+        <span id="hitpoint-display-mage">0</span>
+      </span>
+    </div>
+
+    <div class="matched-gems-display-display">
+      <h3>Gems</h3>
+
+      <div class="matched-gems-display"> 
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-0-color-box"></span>
+          <span class="gem-count" id="gem-type-0-mage">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-1-color-box"></span>
+          <span class="gem-count" id="gem-type-1-mage">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-2-color-box"></span>
+          <span class="gem-count" id="gem-type-2-mage">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-3-color-box"></span>
+          <span class="gem-count" id="gem-type-3-mage">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-4-color-box"></span>
+          <span class="gem-count" id="gem-type-4-mage">0</span>
+        </span>
+
+        <span class="gem-count-container">
+          <span class="color-box" id="gem-type-5-color-box"></span>
+          <span class="gem-count" id="gem-type-5-mage">0</span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  </div>
   </body>
 </html>
