@@ -1,10 +1,11 @@
-var Board = function (width, height, canvas, map) {
+var Board = function (width, height, canvas, map, callback) {
   this.width = width;
   this.height = height;
   this.canvas = canvas;
   this.map = map;
   this.score = 0;
   this.gem_counter = 0;
+  this.callback = callback;
 
   this.BASIC_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
   this.PASTEL_COLORS = [
@@ -19,6 +20,13 @@ var Board = function (width, height, canvas, map) {
   this.gem_types = this.PASTEL_COLORS;
   this.GEM_TYPES_LENGTH = this.gem_types.length;
 
+  this.matched_gems = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
   }
 
   this.gems = [];
@@ -26,16 +34,16 @@ var Board = function (width, height, canvas, map) {
 };
 
 Board.prototype.load_map = function() {
-  console.log("LOAD MAP");
   this.height = this.map.height;
   this.width = this.map.width;
 
   var counter = 0;
   for (var x = 0; x < this.width; x++) {
     for (var y = 0; y < this.height; y++) {
-      var color = this.gem_types[this.map.gem_ids[counter]];
+      var gem_type = this.map.gem_ids[counter]
+      var color = this.gem_types[gem_type];
 
-      this.gems.push(new Gem(color, x, y));
+      this.gems.push(new Gem(color, x, y, gem_type));
       counter++;
     }
   }
@@ -260,10 +268,11 @@ Board.prototype.remove_shapes = function(shapes){
 
           _this.canvas.remove(gem.shape);
           _this.score += 1
-          document.getElementById('score').innerHTML = _this.score;
+          _this.record_matched_gem(gem);
 
           resolve()
         })
+      _this.callback();
       })
     },
     500)
@@ -277,6 +286,10 @@ Board.prototype.set_flashing_animation = function(shape){
       easing: fabric.util.ease.easeInBounce
     });
   })
+}
+
+Board.prototype.record_matched_gem = function(gem){
+  this.matched_gems[gem.type] += 1;
 }
 
 Board.prototype.find_gem_by_screen_position = function(position){
@@ -347,10 +360,11 @@ Board.prototype.add_new_gems_to_top = function(){
 Board.prototype.add_new_gem_to_top = function(x, delay){
   var _this = this;
   return new Promise(function(resolve, reject){
-    var color = _this.gem_types[_this.gem_counter % _this.GEM_TYPES_LENGTH];
+    var gem_type = _this.gem_counter % _this.GEM_TYPES_LENGTH
+    var color = _this.gem_types[gem_type];
     _this.gem_counter += 1;
 
-    var gem = new Gem(color, x, -1);
+    var gem = new Gem(color, x, -1, gem_type);
 
     _this.gems.push(gem);
     _this.canvas.add(gem.shape);

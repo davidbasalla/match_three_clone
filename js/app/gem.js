@@ -1,9 +1,10 @@
-var Gem = function (color, pos_x, pos_y) {
+var Gem = function (color, pos_x, pos_y, type) {
   this.color = color;
   this.pos_x = pos_x;
   this.pos_y = pos_y;
   this.width = 45;
   this.height = 45;
+  this.type = type;
 
   this.movement_vector = { x: 0, y: 0 };
   this.mouse_start_pos = { x: null, y: null };

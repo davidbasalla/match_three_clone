@@ -15,7 +15,9 @@ var Game = function (width, height, map) {
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
   this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
-  this.board = new Board(this.width, this.height, this.canvas, map);
+  // necessary to bind here to keep Game scope when triggered
+  var callback = this.process_event.bind(this)
+  this.board = new Board(this.width, this.height, this.canvas, map, callback);
 };
 
 Game.prototype.start = function(){
@@ -72,3 +74,15 @@ Game.prototype.calculate_move_vector = function(){
     return null;
   }
 }
+
+Game.prototype.process_event = function(){
+  document.getElementById('score').innerHTML = this.board.score;
+
+  document.getElementById('gem-type-0').innerHTML = this.board.matched_gems[0];
+  document.getElementById('gem-type-1').innerHTML = this.board.matched_gems[1];
+  document.getElementById('gem-type-2').innerHTML = this.board.matched_gems[2];
+  document.getElementById('gem-type-3').innerHTML = this.board.matched_gems[3];
+  document.getElementById('gem-type-4').innerHTML = this.board.matched_gems[4];
+  document.getElementById('gem-type-5').innerHTML = this.board.matched_gems[5];
+}
+

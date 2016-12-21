@@ -1,5 +1,6 @@
 body {
     background-color: lightgrey;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 h1 {
@@ -15,4 +16,48 @@ h1 {
     padding: 20px;
     background-color: white;
     box-shadow: 8px 8px grey;
+}
+
+.matched-gems-display {
+  margin-top: 40px;
+}
+
+.score-display{
+  margin-top: 40px;
+}
+
+.gem-count {
+  padding-left: 8px;
+  padding-right:8px;
+}
+
+.color-box {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 22px;
+  padding-right: 22px;
+}
+
+#gem-type-0-color-box {
+  background-color: #E998B3;
+}
+
+#gem-type-1-color-box {
+  background-color: #c2d2e0;
+}
+
+#gem-type-2-color-box {
+  background-color: #d69e85;
+}
+
+#gem-type-3-color-box {
+  background-color: #f2d299;
+}
+
+#gem-type-4-color-box {
+  background-color: #c7c491;
+}
+
+#gem-type-5-color-box {
+  background-color: #bae6d1;
 }
