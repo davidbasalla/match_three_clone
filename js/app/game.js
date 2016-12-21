@@ -6,6 +6,10 @@ var Game = function (width, height, map) {
   this.move_vector = null;
   this.src_pos = null;
   this.dst_pos = null;
+  this.players = [
+    new Player("goblin"),
+    new Player("mage")
+  ]
 
   this.CANVAS_ID = 'c'
 

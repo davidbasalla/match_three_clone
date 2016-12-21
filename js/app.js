@@ -14,12 +14,13 @@ requirejs.config({
 requirejs(["underscore", 
            "fabric",
            "app/game",
+           "app/player",
            "app/board",
            "app/gem", 
            "app/shape",
            "app/map_parser",
            "app/map"], 
-           function(game, board, gem, shape, map_parser, map) {
+           function(game, player, board, gem, shape, map_parser, map) {
   //This function is called when scripts/helper/util.js is loaded.
   //If util.js calls define(), then this function is not fired until
   //util's dependencies have loaded, and the util argument will hold
