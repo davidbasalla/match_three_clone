@@ -13,13 +13,43 @@ var Gem = function (color, pos_x, pos_y, type) {
 
   this.calculate_movement_vector_y = 0;
 
-  this.shape = new fabric.Rect({
+  var imgElement = null;
+  switch(this.type) {
+      case 0:
+          imgElement = document.getElementById('sword');
+          break;
+      case 1:
+          imgElement = document.getElementById('health');
+          break;
+      case 2:
+          imgElement = document.getElementById('poison');
+          break;
+      case 3:
+          imgElement = document.getElementById('fire');
+          break;
+      case 4:
+          imgElement = document.getElementById('lightning');
+          break;
+      case 5:
+          imgElement = document.getElementById('water');
+          break;
+  }
+
+  this.shape = new fabric.Image(imgElement, {
     left: this.pos_x * 50,
     top: this.pos_y * 50,
-    fill: this.color,
     width: this.width,
     height: this.height,
   });
+
+
+  // this.shape = new fabric.Rect({
+  //   left: this.pos_x * 50,
+  //   top: this.pos_y * 50,
+  //   fill: this.color,
+  //   width: this.width,
+  //   height: this.height,
+  // });
 
   this.shape.selectable = false;
 };
@@ -28,8 +58,6 @@ var Gem = function (color, pos_x, pos_y, type) {
 Gem.prototype.position = function() {
   return [this.pos_x, this.pos_y];
 }
-
-// would be cool if rendering the cubes was more declarative...
 
 Gem.prototype.move = function(vector) {
   this.pos_x += vector[0];
