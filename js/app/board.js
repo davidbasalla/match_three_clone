@@ -465,3 +465,60 @@ Board.prototype.reset_matched_gems = function(){
     5: 0,
   }
 }
+
+Board.prototype.is_matching_gem_by_position = function(gem, position){
+  var other_gem = this.find_gem_by_position(position);
+  if (other_gem && other_gem.type == gem.type) {
+    return true
+  }
+
+  return false
+}
+
+Board.prototype.find_move = function(){
+  var move_gem = null;
+  var move_vector = [0, 0];
+
+  for(var i = 0; i < this.gems.length; i++){
+    var gem = this.gems[i];
+
+    if((this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y - 2])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y + 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y + 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y + 2])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x + 2, gem.pos_y]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 3, gem.pos_y]))) {
+      return({"gem": gem, "move_vector": [1, 0]})
+    } else if((this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y + 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x -2, gem.pos_y + 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x -1, gem.pos_y + 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y + 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y + 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 2, gem.pos_y + 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x, gem.pos_y + 2]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x, gem.pos_y + 3]))) {
+      return({"gem": gem, "move_vector": [0, 1]})
+    } else if((this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y - 2])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y + 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y + 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y + 2])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x - 2, gem.pos_y]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x - 3, gem.pos_y]))) {
+      return({"gem": gem, "move_vector": [-1, 0]})
+    } else if((this.is_matching_gem_by_position(gem, [gem.pos_x - 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x -2, gem.pos_y - 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x -1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y - 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x + 1, gem.pos_y - 1]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x + 2, gem.pos_y - 1])) ||
+       (this.is_matching_gem_by_position(gem, [gem.pos_x, gem.pos_y - 2]) &&
+        this.is_matching_gem_by_position(gem, [gem.pos_x, gem.pos_y - 3]))) {
+      return({"gem": gem, "move_vector": [0, -1]})
+    }
+  }
+  return false
+}

@@ -109,6 +109,21 @@ Game.prototype.process_player_turn = function(){
 
   this.deactivate_player(this.current_player)
   this.activate_player(this.players[this.turn_counter % this.player_number])
+
+  if (this.current_player == this.COMPUTER_PLAYER) {
+    this.process_computer_player();
+  }
+}
+
+Game.prototype.process_computer_player = function(){
+  console.log("PROCESS COMPUTER PLAYER")
+
+  _this = this;
+  setTimeout(function(){ 
+    var possible_move = _this.board.find_move();
+    console.log(possible_move);
+    _this.board.swap_gem(possible_move["gem"], possible_move["move_vector"]);
+  }, 2000)
 }
 
 Game.prototype.update_gem_display = function(player){
