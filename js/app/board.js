@@ -185,22 +185,8 @@ Board.prototype.horizontal_matching_gems = function(gem){
   if (matching_gems.length < 3){
     matching_gems = [];
   }
-  else if (matching_gems.length == 4) {
-    matching_gems = this.whole_row_for(gem);
-  }
-  else if (matching_gems.length >= 5) {
-    matching_gems = this.whole_row_for(gem);
-    matching_gems = matching_gems.concat(this.whole_column_for(gem))
-  }
 
   return matching_gems;
-}
-
-Board.prototype.whole_row_for = function(source_gem){
-  gems = _.select(this.gems, function(gem){
-    return gem.pos_y == source_gem.pos_y;
-  })
-  return gems
 }
 
 
