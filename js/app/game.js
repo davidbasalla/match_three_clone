@@ -14,15 +14,15 @@ var Game = function (map) {
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
   this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
-  // necessary to bind here to keep Game scope when triggered
-  var callback = this.process_event.bind(this)
-
   var parsed_map = MapParser.parse(map);
   this.board = new Board(parsed_map["width"], 
                          parsed_map["height"], 
                          parsed_map["gems"], 
-                         this.canvas, 
-                         callback);
+                         this.canvas);
+
+  // necessary to bind here to keep Game scope when triggered
+  var score_callback = this.update_score_display.bind(this)
+  this.gem_manipulator = new GemManipulator(this.board, this.canvas, score_callback);
 };
 
 Game.prototype.start = function(){
@@ -31,7 +31,7 @@ Game.prototype.start = function(){
 
 Game.prototype.handle_mouse_down = function(event){
   this.src_pos = this.mouse_position(event);
-  this.selected_gem = this.board.find_gem_by_screen_position(this.src_pos);
+  this.selected_gem = this.find_gem_by_screen_position(this.src_pos);
 }
 
 Game.prototype.handle_mouse_up = function(event){
@@ -39,7 +39,7 @@ Game.prototype.handle_mouse_up = function(event){
 
   var move_vector = this.calculate_move_vector();
   if(this.selected_gem && move_vector){
-    this.board.swap_gem(this.selected_gem, move_vector);
+    this.gem_manipulator.swap(this.selected_gem, move_vector);
   }
 
   this.selected_gem = null;
@@ -73,10 +73,15 @@ Game.prototype.calculate_move_vector = function(){
   }
 }
 
-Game.prototype.process_event = function(){
-  document.getElementById('score').innerHTML = this.board.matched_gem_counter.count();
+Game.prototype.find_gem_by_screen_position = function(position) {
+  var normalised_pos = [Math.floor(position[0]/50), Math.floor(position[1]/50)];
+  return this.board.find_gem_by_position(normalised_pos);
+}
 
-  var matches = this.board.matched_gem_counter.matched_gems;
+Game.prototype.update_score_display = function(){
+  document.getElementById('score').innerHTML = this.gem_manipulator.matched_gem_counter.count();
+
+  var matches = this.gem_manipulator.matched_gem_counter.matched_gems;
   document.getElementById('gem-type-0').innerHTML = matches[0];
   document.getElementById('gem-type-1').innerHTML = matches[1];
   document.getElementById('gem-type-2').innerHTML = matches[2];
