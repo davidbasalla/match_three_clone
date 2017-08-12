@@ -1,6 +1,6 @@
 var Map = function () {};
 
-Map.prototype.map_1 = function() {
+Map.map_1 = function() {
   var map = 
   [
     [0,1,2],
@@ -11,7 +11,7 @@ Map.prototype.map_1 = function() {
   return map;
 };
 
-Map.prototype.map_2 = function() {
+Map.map_2 = function() {
   var map = 
   [
     [2],
@@ -27,7 +27,7 @@ Map.prototype.map_2 = function() {
   return map;
 };
 
-Map.prototype.map_3 = function() {
+Map.map_3 = function() {
   var map = 
   [
     [1,2,0,1],
@@ -40,7 +40,7 @@ Map.prototype.map_3 = function() {
   return map;
 };
 
-Map.prototype.map_default = function() {
+Map.map_default = function() {
   var map = 
   [
     [0,1,2,3,4,5,0,1,2,3],

@@ -1,7 +1,4 @@
-var Game = function (width, height, map) {
-  this.width = width;
-  this.height = height;
-
+var Game = function (map) {
   this.selected_gem = null;
   this.move_vector = null;
   this.src_pos = null;
@@ -17,16 +14,18 @@ var Game = function (width, height, map) {
 
   // necessary to bind here to keep Game scope when triggered
   var callback = this.process_event.bind(this)
-  this.board = new Board(this.width, this.height, this.canvas, map, callback);
+
+  var parsed_map = MapParser.parse(map);
+  this.board = new Board(parsed_map["width"], 
+                         parsed_map["height"], 
+                         parsed_map["gems"], 
+                         this.canvas, 
+                         callback);
 };
 
 Game.prototype.start = function(){
-  this.draw();
-};
-
-Game.prototype.draw = function(){
   this.board.draw();
-}
+};
 
 Game.prototype.handle_mouse_down = function(event){
   var element = document.getElementById(this.CANVAS_ID)

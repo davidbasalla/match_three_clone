@@ -24,6 +24,24 @@ var Gem = function (color, pos_x, pos_y, type) {
   this.shape.selectable = false;
 };
 
+Gem.colors = function() {
+  return Gem.pastel_colors();
+}
+
+Gem.basic_colors = function() {
+  return ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+}
+
+Gem.pastel_colors = function() {
+  return ["#e998b3", "#c2d2e0", "#d69e85", "#f2d299",  "#c7c491", "#bae6d1"];
+}
+
+Gem.random_gem = function(x, y, seed) {
+  var gem_type = seed % Gem.colors().length;
+  var color = Gem.colors()[gem_type];
+
+  return new Gem(color, x, -1, gem_type);
+}
 
 Gem.prototype.position = function() {
   return [this.pos_x, this.pos_y];

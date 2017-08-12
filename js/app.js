@@ -27,15 +27,6 @@ requirejs(["underscore",
 
   console.log('Program starts...');
 
-  var width = 10;
-  var height = 10;
-  var map = null;
-
-  // Uncomment this to load custom map
-  var map_file = new Map;
-  var parser = new MapParser(map_file.map_default());
-  var map = parser.parse();
-
-  var new_game = new Game(width, height, map);
-  new_game.start();
+  var game = new Game(Map.map_default());
+  game.start();
 });

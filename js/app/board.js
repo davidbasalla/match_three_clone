@@ -1,25 +1,12 @@
-var Board = function (width, height, canvas, map, callback) {
+var Board = function (width, height, gems, canvas, callback) {
   this.width = width;
   this.height = height;
+  this.gems = gems || [];
   this.canvas = canvas;
-  this.map = map;
-  this.score = 0;
-  this.gem_counter = 0;
   this.callback = callback;
 
-  this.BASIC_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
-  this.PASTEL_COLORS = [
-    "#e998b3",
-    "#c2d2e0",
-    "#d69e85",
-    "#f2d299", 
-    "#c7c491",
-    "#bae6d1",
-  ];
-
-  this.gem_types = this.PASTEL_COLORS;
-  this.GEM_TYPES_LENGTH = this.gem_types.length;
-
+  this.score = 0;
+  this.gem_counter = 0;
   this.matched_gems = {
     0: 0,
     1: 0,
@@ -28,26 +15,7 @@ var Board = function (width, height, canvas, map, callback) {
     4: 0,
     5: 0,
   }
-
-  this.gems = [];
-  this.load_map();
 };
-
-Board.prototype.load_map = function() {
-  this.height = this.map.height;
-  this.width = this.map.width;
-
-  var counter = 0;
-  for (var x = 0; x < this.width; x++) {
-    for (var y = 0; y < this.height; y++) {
-      var gem_type = this.map.gem_ids[counter]
-      var color = this.gem_types[gem_type];
-
-      this.gems.push(new Gem(color, x, y, gem_type));
-      counter++;
-    }
-  }
-}
 
 Board.prototype.draw = function() {
   _this = this;
@@ -346,11 +314,8 @@ Board.prototype.add_new_gems_to_top = function(){
 Board.prototype.add_new_gem_to_top = function(x, delay){
   var _this = this;
   return new Promise(function(resolve, reject){
-    var gem_type = _this.gem_counter % _this.GEM_TYPES_LENGTH
-    var color = _this.gem_types[gem_type];
     _this.gem_counter += 1;
-
-    var gem = new Gem(color, x, -1, gem_type);
+    var gem = Gem.random_gem(x, -1, _this.gem_counter);
 
     _this.gems.push(gem);
     _this.canvas.add(gem.shape);

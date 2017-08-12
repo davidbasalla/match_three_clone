@@ -1,21 +1,24 @@
-var MapParser = function (mapfile) {
-  this.mapfile = mapfile;
-  this.height = this.mapfile.length;
-  this.width = this.mapfile[0].length;
+var MapParser = function () {
 };
 
-MapParser.prototype.parse = function() {
-  var gem_ids = [];
+MapParser.parse = function(mapfile) {
+  var height = mapfile.length;
+  var width = mapfile[0].length;
+  var gems = [];
+  var gem_colors = Gem.colors();
 
-  for (var x = 0; x < this.width; x++) {
-    for (var y = 0; y < this.height; y++) {
-      gem_ids.push(this.mapfile[y][x]);
+  for (var x = 0; x < width; x++) {
+    for (var y = 0; y < height; y++) {
+      var gem_type = mapfile[y][x];
+      var color = gem_colors[gem_type]
+
+      gems.push(new Gem(color, x, y, gem_type));
     }
   }
 
   return {
-    gem_ids: gem_ids,
-    height: this.height,
-    width: this.width,
+    height: height,
+    width: width,
+    gems: gems,
   }
 };
