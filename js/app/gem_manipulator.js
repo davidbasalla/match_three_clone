@@ -158,7 +158,7 @@ GemManipulator.prototype.drop_and_refill = function(){
   return new Promise(function(resolve, reject){
     _this.apply_gravity()
       .then(function(){
-        _this.board.fill_overhead_space();
+        _this.board.fill_overhead_space(_this.matched_gem_counter.count());
         resolve()
       })
   })

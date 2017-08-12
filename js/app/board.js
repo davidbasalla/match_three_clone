@@ -33,15 +33,15 @@ Board.prototype.active_gems = function() {
   return _.reject(this.gems, function(gem){ return gem.pos_y < 0; });
 }
 
-Board.prototype.fill_overhead_space = function() {
+Board.prototype.fill_overhead_space = function(seed_offset = 0) {
   this.logger.info("FILL OVERHEAD SPACE")
 
   for(var x = 0; x < this.width; x++){
     for(var y = 1; y <= this.height; y++){
       var gem = this.matrix[x][-y]
       if (!gem) {
-        var index = x * this.width + y;
-        var new_gem = Gem.random_gem(x, -(y), index)
+        var seed_val = x * this.width + y + seed_offset;
+        var new_gem = Gem.random_gem(x, -(y), seed_val)
         this.add_gem(new_gem)
       }
     }
