@@ -23,7 +23,7 @@ GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
 
   var _this = this;
   Promise.all(move_promises).then(function(){
-    _this.process_swap(gem, other_gem, reverse_vector, check_gem_position);
+    _this.validate_swap(gem, other_gem, reverse_vector, check_gem_position);
   })
 }
 
@@ -71,23 +71,42 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
   })
 }
 
-GemManipulator.prototype.process_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
+GemManipulator.prototype.validate_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
   this.logger.info('PROCESS SWAP')
+  // this either starts off the main loop or reverses the swap
 
-  if (check_gem_position) {
-    var matching_shapes = this.board.matching_shapes([gem, other_gem]);
-    if (matching_shapes.length > 0) {
-      var _this = this;
-      this.remove_shapes(matching_shapes).then(function(){
-        _this.refill_board();
-      });
-    }
-    else {
-      this.swap(gem, reverse_vector, false);
-    };
+  if (!check_gem_position){
+    return 
   }
 
+  var matching_shapes = this.board.matching_shapes([gem, other_gem]);
+  if (matching_shapes.length > 0) {
+    this.process_board_state(matching_shapes);
+  }
+  else {
+    this.swap(gem, reverse_vector, false);
+  };
+
   this.canvas.renderAll();
+}
+
+GemManipulator.prototype.process_board_state = function(matching_shapes){
+  this.logger.info('PROCESS BOARD STATE')
+  // this is the main recursive loop that handles cascading gem matches
+
+  if (matching_shapes.length > 0){
+    var _this = this;
+    this.remove_shapes(matching_shapes)
+      .then(this.refill_board.bind(this))
+      .then(function(){
+        var filtered_gems = _.reject(_this.board.gems, function(gem){ return gem.pos_y < 0; });
+        _this.process_board_state(_this.board.matching_shapes(filtered_gems))
+      })
+
+  }
+  else {
+    this.logger.info("TURN IS FINISHED - ADD CALLBACK")
+  }
 }
 
 GemManipulator.prototype.remove_shapes = function(shapes){
@@ -110,11 +129,10 @@ GemManipulator.prototype.remove_shapes = function(shapes){
       _this.callback();
       })
     },
-    1000)
+    500)
   })
 }
 
-// move some of this to Gem class
 GemManipulator.prototype.set_flashing_animation = function(shape){
   _.each(shape.gems, function(gem) {
     gem.shape.animate('opacity', '0', { 
@@ -128,19 +146,49 @@ GemManipulator.prototype.refill_board = function(){
   this.logger.info("REFILL")
   var _this = this;
 
-  this.apply_gravity().then(function(){
-    if(_this.board.top_row_has_missing_gems()){
-      _this.add_new_gems_to_top()
-        .then(function(){
-          var filtered_gems = _.reject(_this.board.gems, function(gem){ return gem.pos_y < 0; });
-
-          return _this.remove_shapes(_this.board.matching_shapes(filtered_gems));
-        })
-        .then(function(){
-          _this.refill_board();
-        })
-    }
+  return new Promise(function(resolve, reject){
+    _this.apply_gravity()
+      .then(_this.add_new_gems_to_top.bind(_this))
+      .then(resolve)
   })
+}
+
+// NOTE: seems expensive to query each time, should use 2D array for storage
+GemManipulator.prototype.apply_gravity = function(){
+  this.logger.info("APPLY GRAVITY")
+
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var move_promises = [];
+
+    // Not sure how or why this works... :/
+    for(var x = 0; x < _this.board.height; x++){
+      for(var y = _this.board.width; y >= 0; y--){
+        gem = _this.board.find_gem_by_position([x, y]);
+        if (gem){
+          if(_this.board.space_below_gem_is_free(gem)){
+            move_promises.push(_this.drop_gem(gem))
+          }
+        }
+      }
+    }
+
+    Promise.all(move_promises).then(resolve)
+  })
+}
+
+GemManipulator.prototype.drop_gem = function(gem, delay=0){
+  var _this = this;
+  return new Promise(function(resolve, reject){
+    var position = gem.position()
+
+    while (_this.board.space_below_is_free(position)){
+      position = [position[0], position[1] + 1]
+    }
+    var drop_by = (position[1] - gem.position()[1])
+
+    _this.move_gem(gem, [0, drop_by], delay).then(resolve)
+  });
 }
 
 GemManipulator.prototype.add_new_gems_to_top = function(){
@@ -182,46 +230,4 @@ GemManipulator.prototype.add_new_gem_to_top = function(x, delay){
       resolve()
     })
   })
-}
-
-// seems expensive to query each time, should use 2D array for storage
-GemManipulator.prototype.apply_gravity = function(){
-  this.logger.info("APPLY GRAVITY")
-
-  var _this = this;
-  return new Promise(function(resolve, reject){
-    var move_promises = [];
-
-    // Not sure how or why this works... :/
-    for(var x = 0; x < _this.board.height; x++){
-      for(var y = _this.board.width; y >= 0; y--){
-        gem = _this.board.find_gem_by_position([x, y]);
-        if (gem){
-          if(_this.board.space_below_gem_is_free(gem)){
-            move_promises.push(_this.drop_gem(gem))
-          }
-        }
-      }
-    }
-
-    Promise.all(move_promises).then(function(){
-      resolve();
-    })
-  })
-}
-
-GemManipulator.prototype.drop_gem = function(gem, delay=0){
-  var _this = this;
-  return new Promise(function(resolve, reject){
-    var position = gem.position()
-
-    while (_this.board.space_below_is_free(position)){
-      position = [position[0], position[1] + 1]
-    }
-    var drop_by = (position[1] - gem.position()[1])
-
-    _this.move_gem(gem, [0, drop_by], delay).then(function(){
-      resolve();
-    })
-  });
 }
