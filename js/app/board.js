@@ -1,9 +1,14 @@
+// This class deals with storing gems and allows for querying, adding and 
+// removing gems
+
 var Board = function (width, height, gems, canvas, logger) {
   this.width = width;
   this.height = height;
   this.gems = gems || [];
   this.canvas = canvas;
   this.logger = logger;
+
+  this.matching_shape_finder = new MatchingShapeFinder(this, logger);
 };
 
 Board.prototype.draw = function() {
@@ -38,4 +43,20 @@ Board.prototype.space_below_is_free = function(position){
   if(position[1] == (this.height - 1)){ return false; }
   if(this.find_gem_by_position([position[0], position[1] + 1])){ return false; }
   return true;
+}
+
+Board.prototype.add_gem = function(gem) {
+  this.gems.push(gem);
+  this.canvas.add(gem.shape);
+}
+
+Board.prototype.remove_gem = function(gem) {
+  var index = this.gems.indexOf(gem);
+  this.gems.splice(index, 1);
+
+  this.canvas.remove(gem.shape);
+}
+
+Board.prototype.matching_shapes = function(gems){
+  return this.matching_shape_finder.matching_shapes(gems)
 }
