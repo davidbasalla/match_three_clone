@@ -1,4 +1,7 @@
-var Game = function (map) {
+var Game = function (map, logger) {
+  this.map = map;
+  this.logger = logger;
+
   this.selected_gem = null;
   this.move_vector = null;
   this.src_pos = null;
@@ -14,15 +17,16 @@ var Game = function (map) {
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
   this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
 
-  var parsed_map = MapParser.parse(map);
+  var parsed_map = MapParser.parse(this.map);
   this.board = new Board(parsed_map["width"], 
                          parsed_map["height"], 
                          parsed_map["gems"], 
-                         this.canvas);
+                         this.canvas,
+                         this.logger);
 
   // necessary to bind here to keep Game scope when triggered
   var score_callback = this.update_score_display.bind(this)
-  this.gem_manipulator = new GemManipulator(this.board, this.canvas, score_callback);
+  this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback);
 };
 
 Game.prototype.start = function(){

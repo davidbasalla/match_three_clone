@@ -1,15 +1,16 @@
 // This class handles all gem manipulation
 
-var GemManipulator = function(board, canvas, callback){
+var GemManipulator = function(board, canvas, logger, callback){
   this.board = board;
   this.canvas = canvas;
+  this.logger = logger;
   this.callback = callback;
 
   this.matched_gem_counter = new MatchedGemCounter;
 }
 
 GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
-  console.log("SWAP")
+  this.logger.info("SWAP")
 
   var new_position = [gem.pos_x + vector[0], gem.pos_y + vector[1]]
   var other_gem = this.board.find_gem_by_position(new_position);
@@ -27,7 +28,7 @@ GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
 }
 
 GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
-  console.log("MOVE GEM")
+  this.logger.info("MOVE GEM")
 
   var _this = this;
   return new Promise(function(resolve, reject){
@@ -71,7 +72,7 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
 }
 
 GemManipulator.prototype.process_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
-  console.log('PROCESS SWAP')
+  this.logger.info('PROCESS SWAP')
   var _this = this;
 
   if (check_gem_position) {
@@ -187,7 +188,7 @@ GemManipulator.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
 }
 
 GemManipulator.prototype.remove_shapes = function(shapes){
-  console.log("REMOVING SHAPE")
+  this.logger.info("REMOVING SHAPE")
   var _this = this;
 
   _.each(shapes, function(shape){
@@ -224,7 +225,7 @@ GemManipulator.prototype.set_flashing_animation = function(shape){
 }
 
 GemManipulator.prototype.refill_board = function(){
-  console.log("REFILL")
+  this.logger.info("REFILL")
   var _this = this;
 
   this.apply_gravity().then(function(){
@@ -243,7 +244,7 @@ GemManipulator.prototype.refill_board = function(){
 }
 
 GemManipulator.prototype.add_new_gems_to_top = function(){
-  console.log("ADD NEW GEMS TO TOP")
+  this.logger.info("ADD NEW GEMS TO TOP")
 
   var _this = this;
   return new Promise(function(resolve, reject){
@@ -270,7 +271,7 @@ GemManipulator.prototype.add_new_gems_to_top = function(){
 }
 
 GemManipulator.prototype.add_new_gem_to_top = function(x, delay){
-  console.log("ADD NEW GEM TO TOP")
+  this.logger.info("ADD NEW GEM TO TOP")
 
   var _this = this;
   return new Promise(function(resolve, reject){
@@ -287,7 +288,7 @@ GemManipulator.prototype.add_new_gem_to_top = function(x, delay){
 
 // seems expensive to query each time, should use 2D array for storage
 GemManipulator.prototype.apply_gravity = function(){
-  console.log("APPLY GRAVITY")
+  this.logger.info("APPLY GRAVITY")
 
   var _this = this;
   return new Promise(function(resolve, reject){

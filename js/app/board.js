@@ -1,8 +1,9 @@
-var Board = function (width, height, gems, canvas) {
+var Board = function (width, height, gems, canvas, logger) {
   this.width = width;
   this.height = height;
   this.gems = gems || [];
   this.canvas = canvas;
+  this.logger = logger;
 };
 
 Board.prototype.draw = function() {
