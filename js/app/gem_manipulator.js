@@ -23,12 +23,15 @@ GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
 
   var _this = this;
   Promise.all(move_promises).then(function(){
+    // need to add the first gem back in, as the swap wiped the the key entry
+    _this.board.matrix[gem.pos_x][gem.pos_y] = gem
+
     _this.validate_swap(gem, other_gem, reverse_vector, check_gem_position);
   })
 }
 
 GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
-  this.logger.info("MOVE GEM")
+  // this.logger.info("MOVE GEM")
 
   var _this = this;
   return new Promise(function(resolve, reject){
@@ -56,8 +59,14 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
       }
     }
 
+    var old_pos = [gem.pos_x, gem.pos_y]
+
     gem.pos_x += vector_x;
     gem.pos_y += vector_y;
+
+    var new_pos = [gem.pos_x, gem.pos_y]
+
+    _this.board.update_matrix(gem, old_pos, new_pos)
 
     // duration matches the distance traveled so to have similar speed
     setTimeout(function(){
@@ -155,7 +164,6 @@ GemManipulator.prototype.drop_and_refill = function(){
   })
 }
 
-// NOTE: seems expensive to query each time, should use 2D array for storage
 GemManipulator.prototype.apply_gravity = function(){
   this.logger.info("APPLY GRAVITY")
 
@@ -165,7 +173,7 @@ GemManipulator.prototype.apply_gravity = function(){
 
     // Not sure how or why this works... :/
     for(var x = 0; x < _this.board.width; x++){
-      for(var y = _this.board.height; y >= -10; y--){
+      for(var y = _this.board.height; y >= -(_this.board.height); y--){
         gem = _this.board.find_gem_by_position([x, y]);
         if (gem){
           if(_this.board.space_below_gem_is_free(gem)){

@@ -3,7 +3,6 @@ var Map = function () {};
 Map.map_1 = function() {
   var map = 
   [
-    [0,1,2],
     [1,2,0],
     [2,0,2],
   ];
