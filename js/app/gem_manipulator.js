@@ -97,10 +97,9 @@ GemManipulator.prototype.process_board_state = function(matching_shapes){
   if (matching_shapes.length > 0){
     var _this = this;
     this.remove_shapes(matching_shapes)
-      .then(this.refill_board.bind(this))
+      .then(this.drop_and_refill.bind(this))
       .then(function(){
-        var filtered_gems = _.reject(_this.board.gems, function(gem){ return gem.pos_y < 0; });
-        _this.process_board_state(_this.board.matching_shapes(filtered_gems))
+        _this.process_board_state(_this.board.matching_shapes(_this.board.active_gems()))
       })
 
   }
@@ -134,6 +133,7 @@ GemManipulator.prototype.remove_shapes = function(shapes){
 }
 
 GemManipulator.prototype.set_flashing_animation = function(shape){
+  var _this = this;
   _.each(shape.gems, function(gem) {
     gem.shape.animate('opacity', '0', { 
       onChange: _this.canvas.renderAll.bind(_this.canvas),
@@ -142,14 +142,16 @@ GemManipulator.prototype.set_flashing_animation = function(shape){
   })
 }
 
-GemManipulator.prototype.refill_board = function(){
-  this.logger.info("REFILL")
+GemManipulator.prototype.drop_and_refill = function(){
+  this.logger.info("DROP AND REFILL")
   var _this = this;
 
   return new Promise(function(resolve, reject){
     _this.apply_gravity()
-      .then(_this.add_new_gems_to_top.bind(_this))
-      .then(resolve)
+      .then(function(){
+        _this.board.fill_overhead_space();
+        resolve()
+      })
   })
 }
 
@@ -162,8 +164,8 @@ GemManipulator.prototype.apply_gravity = function(){
     var move_promises = [];
 
     // Not sure how or why this works... :/
-    for(var x = 0; x < _this.board.height; x++){
-      for(var y = _this.board.width; y >= 0; y--){
+    for(var x = 0; x < _this.board.width; x++){
+      for(var y = _this.board.height; y >= -10; y--){
         gem = _this.board.find_gem_by_position([x, y]);
         if (gem){
           if(_this.board.space_below_gem_is_free(gem)){
@@ -189,45 +191,4 @@ GemManipulator.prototype.drop_gem = function(gem, delay=0){
 
     _this.move_gem(gem, [0, drop_by], delay).then(resolve)
   });
-}
-
-GemManipulator.prototype.add_new_gems_to_top = function(){
-  this.logger.info("ADD NEW GEMS TO TOP")
-
-  var _this = this;
-  return new Promise(function(resolve, reject){
-    var move_promises = []
-    var delay = 0;
-
-    for(var x = 0; x < _this.board.width; x++){
-      for(var y = (_this.board.height - 1); y >= 0; y--){
-        gem = _this.board.find_gem_by_position([x, y]);
-        if (gem == null){
-          move_promises.push(_this.add_new_gem_to_top(x, delay));
-          delay += 100;
-        }
-      }
-      delay = 0;
-    }
-
-    // issue here that dropping gems happens all at the same time
-    // any way to delay this somehow? Would need to separate into per columns
-    Promise.all(move_promises).then(function(){
-      resolve()
-    })
-  })
-}
-
-GemManipulator.prototype.add_new_gem_to_top = function(x, delay){
-  this.logger.info("ADD NEW GEM TO TOP")
-
-  var _this = this;
-  return new Promise(function(resolve, reject){
-    var gem = Gem.random_gem(x, -1, _this.board.gems.length);
-    _this.board.add_gem(gem)
-
-    _this.drop_gem(gem, delay).then(function(){
-      resolve()
-    })
-  })
 }

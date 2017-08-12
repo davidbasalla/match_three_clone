@@ -4,7 +4,7 @@ var MatchingShapeFinder = function(board, logger){
 }
 
 MatchingShapeFinder.prototype.matching_shapes = function(gems){
-  this.logger.info('MATCHING SHAPES')
+  // this.logger.info('MATCHING SHAPES')
 
   var shapes = [];
 

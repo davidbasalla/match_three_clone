@@ -40,7 +40,7 @@ Gem.random_gem = function(x, y, seed) {
   var gem_type = seed % Gem.colors().length;
   var color = Gem.colors()[gem_type];
 
-  return new Gem(color, x, -1, gem_type);
+  return new Gem(color, x, y, gem_type);
 }
 
 Gem.prototype.position = function() {
@@ -52,7 +52,6 @@ Gem.prototype.position = function() {
 Gem.prototype.move = function(vector) {
   this.pos_x += vector[0];
   this.pos_y += vector[1];
-
 
   this.shape.set({left: this.pos_x * 50, top: this.pos_y * 50})
 };

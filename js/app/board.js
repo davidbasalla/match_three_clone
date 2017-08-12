@@ -8,11 +8,34 @@ var Board = function (width, height, gems, canvas, logger) {
   this.canvas = canvas;
   this.logger = logger;
 
+  this.initialise_matrix();
+  this.fill_matrix();
+
+  this.fill_overhead_space();
   this.matching_shape_finder = new MatchingShapeFinder(this, logger);
 };
 
+Board.prototype.active_gems = function() {
+  return _.reject(this.gems, function(gem){ return gem.pos_y < 0; });
+}
+
+Board.prototype.fill_overhead_space = function() {
+  this.logger.info("FILL OVERHEAD SPACE")
+
+  for(var x = 0; x < this.width; x++){
+    for(var y = 1; y < this.width; y++){
+      var gem = this.find_gem_by_position([x, -(y)])
+      if (!gem) {
+        var index = x * this.width + y;
+        var new_gem = Gem.random_gem(x, -(y), index)
+        this.add_gem(new_gem)
+      }
+    }
+  }
+}
+
 Board.prototype.draw = function() {
-  _this = this;
+  var _this = this;
   _.each(this.gems, function(gem) {
     _this.canvas.add(gem.shape);
   })
