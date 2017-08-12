@@ -18,8 +18,9 @@ requirejs(["underscore",
            "app/gem", 
            "app/shape",
            "app/map_parser",
-           "app/map"], 
-           function(game, board, gem, shape, map_parser, map) {
+           "app/map",
+           "app/matched_gem_counter"], 
+           function(game, board, gem, shape, map_parser, map, matched_gem_counter) {
   //This function is called when scripts/helper/util.js is loaded.
   //If util.js calls define(), then this function is not fired until
   //util's dependencies have loaded, and the util argument will hold

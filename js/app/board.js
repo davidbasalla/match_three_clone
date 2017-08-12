@@ -5,16 +5,7 @@ var Board = function (width, height, gems, canvas, callback) {
   this.canvas = canvas;
   this.callback = callback;
 
-  this.score = 0;
-  this.gem_counter = 0;
-  this.matched_gems = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-  }
+  this.matched_gem_counter = new MatchedGemCounter;
 };
 
 Board.prototype.draw = function() {
@@ -54,8 +45,7 @@ Board.prototype.move_gem = function(gem, vector, delay=0){
     gem.pos_x += vector_x;
     gem.pos_y += vector_y;
 
-    // duration matches the distance travelled so to have similar speed
-
+    // duration matches the distance traveled so to have similar speed
     setTimeout(function(){
       gem.shape.animate(move_attr, move_amplitude, { 
         onChange: _this.canvas.renderAll.bind(_this.canvas),
@@ -221,8 +211,7 @@ Board.prototype.remove_shapes = function(shapes){
           _this.gems.splice(index, 1);
 
           _this.canvas.remove(gem.shape);
-          _this.score += 1
-          _this.record_matched_gem(gem);
+          _this.matched_gem_counter.update(gem);
 
           resolve()
         })
@@ -240,10 +229,6 @@ Board.prototype.set_flashing_animation = function(shape){
       easing: fabric.util.ease.easeInBounce
     });
   })
-}
-
-Board.prototype.record_matched_gem = function(gem){
-  this.matched_gems[gem.type] += 1;
 }
 
 Board.prototype.find_gem_by_screen_position = function(position){
@@ -314,8 +299,7 @@ Board.prototype.add_new_gems_to_top = function(){
 Board.prototype.add_new_gem_to_top = function(x, delay){
   var _this = this;
   return new Promise(function(resolve, reject){
-    _this.gem_counter += 1;
-    var gem = Gem.random_gem(x, -1, _this.gem_counter);
+    var gem = Gem.random_gem(x, -1, _this.gems.length);
 
     _this.gems.push(gem);
     _this.canvas.add(gem.shape);

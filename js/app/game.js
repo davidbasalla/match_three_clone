@@ -7,6 +7,8 @@ var Game = function (map) {
   this.CANVAS_ID = 'c'
 
   // set up canvas and handlers
+  // weird that the canvas is here? this is display logic, firmly mixed into
+  // the game logic
   var _this = this;
   this.canvas = new fabric.Canvas(this.CANVAS_ID);
   this.canvas.on('mouse:down', function(event){_this.handle_mouse_down(event)});
@@ -28,24 +30,12 @@ Game.prototype.start = function(){
 };
 
 Game.prototype.handle_mouse_down = function(event){
-  var element = document.getElementById(this.CANVAS_ID)
-  var canvas_offset = element.getBoundingClientRect();
-
-  this.src_pos = [
-    event.e.clientX - canvas_offset['left'],
-    event.e.clientY - canvas_offset['top']
-  ]
+  this.src_pos = this.mouse_position(event);
   this.selected_gem = this.board.find_gem_by_screen_position(this.src_pos);
 }
 
 Game.prototype.handle_mouse_up = function(event){
-  var element = document.getElementById(this.CANVAS_ID)
-  var canvas_offset = element.getBoundingClientRect();
-
-  this.dst_pos = [
-    event.e.clientX - canvas_offset['left'],
-    event.e.clientY - canvas_offset['top']
-  ];
+  this.dst_pos = this.mouse_position(event);
 
   var move_vector = this.calculate_move_vector();
   if(this.selected_gem && move_vector){
@@ -53,6 +43,15 @@ Game.prototype.handle_mouse_up = function(event){
   }
 
   this.selected_gem = null;
+}
+
+Game.prototype.mouse_position = function(event) {
+  var element = document.getElementById(this.CANVAS_ID)
+  var canvas_offset = element.getBoundingClientRect();
+
+  var x = event.e.clientX - canvas_offset['left'];
+  var y = event.e.clientY - canvas_offset['top'];
+  return [x, y]
 }
 
 Game.prototype.calculate_move_vector = function(){
@@ -75,13 +74,14 @@ Game.prototype.calculate_move_vector = function(){
 }
 
 Game.prototype.process_event = function(){
-  document.getElementById('score').innerHTML = this.board.score;
+  document.getElementById('score').innerHTML = this.board.matched_gem_counter.count();
 
-  document.getElementById('gem-type-0').innerHTML = this.board.matched_gems[0];
-  document.getElementById('gem-type-1').innerHTML = this.board.matched_gems[1];
-  document.getElementById('gem-type-2').innerHTML = this.board.matched_gems[2];
-  document.getElementById('gem-type-3').innerHTML = this.board.matched_gems[3];
-  document.getElementById('gem-type-4').innerHTML = this.board.matched_gems[4];
-  document.getElementById('gem-type-5').innerHTML = this.board.matched_gems[5];
+  var matches = this.board.matched_gem_counter.matched_gems;
+  document.getElementById('gem-type-0').innerHTML = matches[0];
+  document.getElementById('gem-type-1').innerHTML = matches[1];
+  document.getElementById('gem-type-2').innerHTML = matches[2];
+  document.getElementById('gem-type-3').innerHTML = matches[3];
+  document.getElementById('gem-type-4').innerHTML = matches[4];
+  document.getElementById('gem-type-5').innerHTML = matches[5];
 }
 
