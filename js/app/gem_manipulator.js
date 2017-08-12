@@ -83,7 +83,7 @@ GemManipulator.prototype.process_swap = function(gem, other_gem, reverse_vector,
       });
     }
     else {
-      this.swap_gem(gem, reverse_vector, false);
+      this.swap(gem, reverse_vector, false);
     };
   }
 
@@ -115,12 +115,12 @@ GemManipulator.prototype.matching_shape_for = function(gem){
   var matching_shape = null;
   var matching_gems = [];
 
-  var horizontal_gems = this.horizontal_matching_gems(gem);
+  var horizontal_gems = this.matching_gems(gem, "horizontal");
   if (horizontal_gems.length > 0) {
     matching_gems = matching_gems.concat(horizontal_gems);
   }
 
-  var vertical_gems = this.vertical_matching_gems(gem);
+  var vertical_gems = this.matching_gems(gem, "vertical");
   if (vertical_gems.length > 0) {
     matching_gems = matching_gems.concat(vertical_gems);
   }
@@ -132,11 +132,20 @@ GemManipulator.prototype.matching_shape_for = function(gem){
   return matching_shape;
 }
 
-GemManipulator.prototype.vertical_matching_gems = function(gem){
+GemManipulator.prototype.matching_gems = function(gem, horizontal_or_vertical){
   var matching_gems = [gem];
 
-  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 0, 1));
-  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 0, -1));
+  if (horizontal_or_vertical == "horizontal"){
+    vector_1 = [0, 1]
+    vector_2 = [0, -1]
+  }
+  else {
+    vector_1 = [1, 0]
+    vector_2 = [-1, 0]
+  }
+
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, vector_1));
+  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, vector_2));
 
   // clear gems if not more than 3
   if (matching_gems.length < 3){
@@ -146,32 +155,11 @@ GemManipulator.prototype.vertical_matching_gems = function(gem){
   return matching_gems;
 }
 
-GemManipulator.prototype.horizontal_matching_gems = function(gem){
-  var matching_gems = [gem];
-
-  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, 1, 0));
-  matching_gems = matching_gems.concat(this.walk_matching_gems(gem, -1, 0));
-
-  // clear gems if not more than 3
-  if (matching_gems.length < 3){
-    matching_gems = [];
-  }
-
-  return matching_gems;
-}
-
-GemManipulator.prototype.whole_column_for = function(source_gem){
-  gems = _.select(this.board.gems, function(gem){
-    return gem.pos_x == source_gem.pos_x;
-  })
-  return gems
-}
-
-GemManipulator.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
+GemManipulator.prototype.walk_matching_gems = function(gem, vector){
   var position = gem.position();
   var matching_gems = [];
-  position[0] += x_vector;
-  position[1] += y_vector;
+  position[0] += vector[0];
+  position[1] += vector[1];
 
   var next_gem = this.board.find_gem_by_position(position);
 
@@ -179,8 +167,8 @@ GemManipulator.prototype.walk_matching_gems = function(gem, x_vector, y_vector){
         next_gem.color == gem.color &&
         next_gem.pos_y >= 0){
     matching_gems.push(next_gem);
-    position[0] += x_vector;
-    position[1] += y_vector;
+    position[0] += vector[0];
+    position[1] += vector[1];
     next_gem = this.board.find_gem_by_position(position);
   }
 
