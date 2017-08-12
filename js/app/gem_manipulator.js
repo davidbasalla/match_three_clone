@@ -21,8 +21,19 @@ GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
     this.move_gem(other_gem, reverse_vector),
   ];
 
+  // start animation
+  var globalID;
   var _this = this;
+  function repeatOften() {
+    _this.canvas.renderAll()
+    globalID = requestAnimationFrame(repeatOften);
+  }
+  globalID = requestAnimationFrame(repeatOften);
+
   Promise.all(move_promises).then(function(){
+    // stop animation
+    cancelAnimationFrame(globalID);
+
     // need to add the first gem back in, as the swap wiped the the key entry
     _this.board.matrix[gem.pos_x][gem.pos_y] = gem
 
@@ -71,7 +82,6 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
     // duration matches the distance traveled so to have similar speed
     setTimeout(function(){
       gem.shape.animate(move_attr, move_amplitude, { 
-        onChange: _this.canvas.renderAll.bind(_this.canvas),
         onComplete: resolve,
         duration: 100 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
       });
@@ -103,6 +113,15 @@ GemManipulator.prototype.process_board_state = function(matching_shapes){
   this.logger.info('PROCESS BOARD STATE')
   // this is the main recursive loop that handles cascading gem matches
 
+  // start animation
+  var globalID;
+  var _this = this;
+  function repeatOften() {
+    _this.canvas.renderAll()
+    globalID = requestAnimationFrame(repeatOften);
+  }
+  globalID = requestAnimationFrame(repeatOften);
+
   if (matching_shapes.length > 0){
     var _this = this;
     this.remove_shapes(matching_shapes)
@@ -113,6 +132,9 @@ GemManipulator.prototype.process_board_state = function(matching_shapes){
 
   }
   else {
+    // stop animation
+    cancelAnimationFrame(globalID);
+
     this.logger.info("TURN IS FINISHED - ADD CALLBACK")
   }
 }
