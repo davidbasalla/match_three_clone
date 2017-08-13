@@ -1,11 +1,12 @@
 // This class handles all gem manipulation
 
-var GemManipulator = function(board, canvas, logger, matched_gems_callback, turn_callback){
+var GemManipulator = function(board, canvas, logger, matched_gems_callback, turn_callback, reset_turn_callback){
   this.board = board;
   this.canvas = canvas;
   this.logger = logger;
   this.matched_gems_callback = matched_gems_callback;
   this.turn_callback = turn_callback;
+  this.reset_turn_callback = reset_turn_callback;
 
   this.matched_gem_counter = new MatchedGemCounter;
 }
@@ -22,19 +23,8 @@ GemManipulator.prototype.swap = function(gem, vector, check_gem_position){
     this.move_gem(other_gem, reverse_vector),
   ];
 
-  // start animation
-  var globalID;
-  var _this = this;
-  function repeatOften() {
-    _this.canvas.renderAll()
-    globalID = requestAnimationFrame(repeatOften);
-  }
-  globalID = requestAnimationFrame(repeatOften);
-
+  var _this = this
   Promise.all(move_promises).then(function(){
-    // stop animation
-    cancelAnimationFrame(globalID);
-
     // need to add the first gem back in, as the swap wiped the the key entry
     _this.board.matrix[gem.pos_x][gem.pos_y] = gem
 
@@ -106,22 +96,11 @@ GemManipulator.prototype.validate_swap = function(gem, other_gem, reverse_vector
   else {
     this.swap(gem, reverse_vector, false);
   };
-
-  this.canvas.renderAll();
 }
 
 GemManipulator.prototype.process_board_state = function(matching_shapes){
   this.logger.info('PROCESS BOARD STATE')
   // this is the main recursive loop that handles cascading gem matches
-
-  // start animation
-  var globalID;
-  var _this = this;
-  function repeatOften() {
-    _this.canvas.renderAll()
-    globalID = requestAnimationFrame(repeatOften);
-  }
-  globalID = requestAnimationFrame(repeatOften);
 
   if (matching_shapes.length > 0){
     var _this = this;
@@ -133,9 +112,6 @@ GemManipulator.prototype.process_board_state = function(matching_shapes){
 
   }
   else {
-    // stop animation
-    cancelAnimationFrame(globalID);
-
     this.logger.info("TURN IS FINISHED")
     this.turn_callback()
   }

@@ -10,6 +10,7 @@ var Game = function (map, logger) {
   this.input_blocked = false;
 
   this.CANVAS_ID = 'c'
+  this.global_render_id = 0
 
   // set up canvas and handlers
   // weird that the canvas is here? this is display logic, firmly mixed into
@@ -28,13 +29,31 @@ var Game = function (map, logger) {
 
   // necessary to bind here to keep Game scope when triggered
   var score_callback = this.update_score_display.bind(this)
-  var turn_callback = this.update_turn.bind(this)
-  this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback, turn_callback);
+  var turn_callback = this.end_turn.bind(this)
+  var reset_turn_callback = this.reset_turn.bind(this)
+  this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback, turn_callback, reset_turn_callback);
 };
 
 Game.prototype.start = function(){
   this.board.draw();
 };
+
+Game.prototype.start_turn = function(selected_gem, move_vector){
+  this.start_animation()
+  this.gem_manipulator.swap(selected_gem, move_vector);
+}
+
+Game.prototype.end_turn = function(){
+  this.reset_turn()
+
+  this.turn_count += 1;
+  this.update_turn_display()
+}
+
+Game.prototype.reset_turn = function(){
+  this.stop_animation()
+  this.input_blocked = false;
+}
 
 Game.prototype.handle_mouse_down = function(event){
   this.src_pos = this.mouse_position(event);
@@ -48,7 +67,7 @@ Game.prototype.handle_mouse_up = function(event){
 
   var move_vector = this.calculate_move_vector();
   if(this.selected_gem && move_vector){
-    this.gem_manipulator.swap(this.selected_gem, move_vector);
+    this.start_turn(this.selected_gem, move_vector)
   }
 
   this.selected_gem = null;
@@ -100,12 +119,19 @@ Game.prototype.update_score_display = function(){
   document.getElementById('gem-type-5').innerHTML = matches[5];
 }
 
-Game.prototype.update_turn = function(){
-  this.turn_count += 1;
-  this.input_blocked = false;
-  this.update_turn_display()
-}
-
 Game.prototype.update_turn_display = function(){
   document.getElementById('turn').innerHTML = this.turn_count;
+}
+
+Game.prototype.start_animation = function(){
+  var _this = this;
+  function render_loop() {
+    _this.canvas.renderAll()
+    _this.global_render_id = requestAnimationFrame(render_loop);
+  }
+  this.global_render_id = requestAnimationFrame(render_loop);
+}
+
+Game.prototype.stop_animation = function(){
+  cancelAnimationFrame(this.global_render_id);
 }
