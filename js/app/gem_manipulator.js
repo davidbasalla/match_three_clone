@@ -8,6 +8,7 @@ var GemManipulator = function(board, canvas, logger, matched_gems_callback, turn
   this.turn_callback = turn_callback;
   this.reset_turn_callback = reset_turn_callback;
 
+  this.speed_factor = 150;
   this.matched_gem_counter = new MatchedGemCounter;
 }
 
@@ -74,7 +75,7 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
     setTimeout(function(){
       gem.shape.animate(move_attr, move_amplitude, { 
         onComplete: resolve,
-        duration: 100 * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
+        duration: _this.speed_factor * Math.max(Math.abs(vector_x), Math.abs(vector_y)),
       });
     },
     delay)
@@ -82,7 +83,7 @@ GemManipulator.prototype.move_gem = function(gem, vector, delay=0){
 }
 
 GemManipulator.prototype.validate_swap = function(gem, other_gem, reverse_vector, check_gem_position=true){
-  this.logger.info('PROCESS SWAP')
+  this.logger.info('VALIDATE SWAP')
   // this either starts off the main loop or reverses the swap
 
   if (!check_gem_position){
@@ -137,7 +138,7 @@ GemManipulator.prototype.remove_shapes = function(shapes){
       _this.matched_gems_callback();
       })
     },
-    500)
+    _this.speed_factor * 4)
   })
 }
 
@@ -146,7 +147,8 @@ GemManipulator.prototype.set_flashing_animation = function(shape){
   _.each(shape.gems, function(gem) {
     gem.shape.animate('opacity', '0', { 
       onChange: _this.canvas.renderAll.bind(_this.canvas),
-      easing: fabric.util.ease.easeInBounce
+      easing: fabric.util.ease.easeInBounce,
+      duration: _this.speed_factor * 4,
     });
   })
 }
