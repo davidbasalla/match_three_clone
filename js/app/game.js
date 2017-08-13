@@ -6,6 +6,8 @@ var Game = function (map, logger) {
   this.move_vector = null;
   this.src_pos = null;
   this.dst_pos = null;
+  this.turn_count = 1;
+  this.input_blocked = false;
 
   this.CANVAS_ID = 'c'
 
@@ -26,7 +28,8 @@ var Game = function (map, logger) {
 
   // necessary to bind here to keep Game scope when triggered
   var score_callback = this.update_score_display.bind(this)
-  this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback);
+  var turn_callback = this.update_turn.bind(this)
+  this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback, turn_callback);
 };
 
 Game.prototype.start = function(){
@@ -39,6 +42,8 @@ Game.prototype.handle_mouse_down = function(event){
 }
 
 Game.prototype.handle_mouse_up = function(event){
+  if (this.input_blocked){ return }
+
   this.dst_pos = this.mouse_position(event);
 
   var move_vector = this.calculate_move_vector();
@@ -47,6 +52,7 @@ Game.prototype.handle_mouse_up = function(event){
   }
 
   this.selected_gem = null;
+  this.input_blocked = true;
 }
 
 Game.prototype.mouse_position = function(event) {
@@ -94,3 +100,12 @@ Game.prototype.update_score_display = function(){
   document.getElementById('gem-type-5').innerHTML = matches[5];
 }
 
+Game.prototype.update_turn = function(){
+  this.turn_count += 1;
+  this.input_blocked = false;
+  this.update_turn_display()
+}
+
+Game.prototype.update_turn_display = function(){
+  document.getElementById('turn').innerHTML = this.turn_count;
+}

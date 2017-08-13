@@ -1,10 +1,11 @@
 // This class handles all gem manipulation
 
-var GemManipulator = function(board, canvas, logger, callback){
+var GemManipulator = function(board, canvas, logger, matched_gems_callback, turn_callback){
   this.board = board;
   this.canvas = canvas;
   this.logger = logger;
-  this.callback = callback;
+  this.matched_gems_callback = matched_gems_callback;
+  this.turn_callback = turn_callback;
 
   this.matched_gem_counter = new MatchedGemCounter;
 }
@@ -135,7 +136,8 @@ GemManipulator.prototype.process_board_state = function(matching_shapes){
     // stop animation
     cancelAnimationFrame(globalID);
 
-    this.logger.info("TURN IS FINISHED - ADD CALLBACK")
+    this.logger.info("TURN IS FINISHED")
+    this.turn_callback()
   }
 }
 
@@ -156,7 +158,7 @@ GemManipulator.prototype.remove_shapes = function(shapes){
 
           resolve()
         })
-      _this.callback();
+      _this.matched_gems_callback();
       })
     },
     500)
