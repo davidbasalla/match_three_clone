@@ -39,6 +39,20 @@ Map.map_3 = function() {
   return map;
 };
 
+Map.map_4 = function() {
+  var map = 
+  [
+    [1,2,0,1,3,4],
+    [1,2,0,1,4,3],
+    [0,1,1,1,3,4],
+    [1,2,0,1,4,3],
+    [2,0,2,0,4,3],
+    [1,2,0,2,0,4],
+  ];
+
+  return map;
+};
+
 Map.map_default = function() {
   var map = 
   [

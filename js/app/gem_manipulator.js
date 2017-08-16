@@ -87,6 +87,7 @@ GemManipulator.prototype.validate_swap = function(gem, other_gem, reverse_vector
   // this either starts off the main loop or reverses the swap
 
   if (!check_gem_position){
+    this.reset_turn_callback();
     return 
   }
 
