@@ -1,0 +1,8 @@
+{
+  "name": "match_three_clone",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:davidbasalla/match_three_clone.git",
+  "author": "David Basalla <davidbasalla@gmail.com>",
+  "license": "MIT"
+}
