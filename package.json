@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "git@github.com:davidbasalla/match_three_clone.git",
   "author": "David Basalla <davidbasalla@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^3.11.0"
+  }
 }
