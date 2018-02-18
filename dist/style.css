@@ -35,11 +35,16 @@ h1 {
   padding-right:8px;
 }
 
+.gem-count-container {
+  display: inline-table;
+}
+
 .color-box {
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 22px;
   padding-right: 22px;
+  display: inline;
 }
 
 #gem-type-0-color-box {

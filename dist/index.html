@@ -5,55 +5,12 @@
   </head>
   <body>
 
-  <div class="board">
-    <canvas id="c" width="1000" height="500"></canvas>
-
-    <div class="matched-gems-display"> 
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-0-color-box"></span>
-        <span class="gem-count" id="gem-type-0">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-1-color-box"></span>
-        <span class="gem-count" id="gem-type-1">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-2-color-box"></span>
-        <span class="gem-count" id="gem-type-2">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-3-color-box"></span>
-        <span class="gem-count" id="gem-type-3">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-4-color-box"></span>
-        <span class="gem-count" id="gem-type-4">0</span>
-      </span>
-
-      <span class="gem-count-container">
-        <span class="color-box" id="gem-type-5-color-box"></span>
-        <span class="gem-count" id="gem-type-5">0</span>
-      </span>
+    <div class="board">
+      <canvas id="c" width="1000" height="500"></canvas>
+      <div id="matched-gems-display" class="matched-gems-display" />
     </div>
 
-    <div class="stats-display"> 
-      <span class="stat-display"> 
-        Turn: 
-        <span id="turn">1</span>
-      </span>
-
-      <span class="stat-display"> 
-        Score: 
-        <span id="score">0</span>
-      </span>
-    </div>
-  </div>
-
-  <script src="vendor.js"></script>
-  <script src="app.js"></script>
+    <script src="vendor.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

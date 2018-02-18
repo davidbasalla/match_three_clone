@@ -1,7 +1,11 @@
+import { fabric } from 'fabric'
+import React from 'react'
+import ReactDOM from 'react-dom'
+
 import Board from './board'
 import GemManipulator from './gem_manipulator'
-import { fabric } from 'fabric'
 import MapParser from './map_parser'
+import ScoreDisplay from './ScoreDisplay'
 
 class Game {
   constructor (map, logger) {
@@ -39,6 +43,8 @@ class Game {
     var turn_callback = this.end_turn.bind(this)
     var reset_turn_callback = this.reset_turn.bind(this)
     this.gem_manipulator = new GemManipulator(this.board, this.canvas, this.logger, score_callback, turn_callback, reset_turn_callback);
+
+    this.update_score_display();
   }
 
   start() {
@@ -54,7 +60,7 @@ class Game {
     this.reset_turn()
 
     this.turn_count += 1;
-    this.update_turn_display()
+    this.update_score_display()
   }
 
   reset_turn() {
@@ -115,19 +121,16 @@ class Game {
   }
 
   update_score_display() {
-    document.getElementById('score').innerHTML = this.gem_manipulator.matched_gem_counter.count();
+    console.log("UPDATE")
 
-    var matches = this.gem_manipulator.matched_gem_counter.matched_gems;
-    document.getElementById('gem-type-0').innerHTML = matches[0];
-    document.getElementById('gem-type-1').innerHTML = matches[1];
-    document.getElementById('gem-type-2').innerHTML = matches[2];
-    document.getElementById('gem-type-3').innerHTML = matches[3];
-    document.getElementById('gem-type-4').innerHTML = matches[4];
-    document.getElementById('gem-type-5').innerHTML = matches[5];
-  }
-
-  update_turn_display() {
-    document.getElementById('turn').innerHTML = this.turn_count;
+    ReactDOM.render(
+      <ScoreDisplay 
+        count={ this.gem_manipulator.matched_gem_counter.count() }
+        matches={ this.gem_manipulator.matched_gem_counter.matched_gems }
+        turn={this.turn_count}
+      />,
+      document.getElementById('matched-gems-display')
+    );
   }
 
   start_animation() {
