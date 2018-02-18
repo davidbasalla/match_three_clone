@@ -1,9 +1,13 @@
-var Logger = function(verbose){
-  this.verbose = verbose;
-}
+class Logger {
+  constructor(verbose) {
+    this.verbose = verbose;
+  }
 
-Logger.prototype.info = function(message){
-  if(this.verbose == true){
-    console.log(message)
+  info (message) {
+    if(this.verbose == true){
+      console.log(message)
+    }
   }
 }
+
+export default Logger;
