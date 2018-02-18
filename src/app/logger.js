@@ -3,9 +3,9 @@ class Logger {
     this.verbose = verbose;
   }
 
-  info (message) {
-    if(this.verbose == true){
-      console.log(message)
+  info(message) {
+    if (this.verbose == true) {
+      console.log(message);
     }
   }
 }
