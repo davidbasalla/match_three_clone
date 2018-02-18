@@ -1,6 +1,6 @@
-var Map = function () {};
+// USE ARROW FUNCTIONS
 
-Map.map_1 = function() {
+export function map_1() {
   var map = 
   [
     [1,2,0],
@@ -10,7 +10,7 @@ Map.map_1 = function() {
   return map;
 };
 
-Map.map_2 = function() {
+export function map_2() {
   var map = 
   [
     [2],
@@ -26,7 +26,7 @@ Map.map_2 = function() {
   return map;
 };
 
-Map.map_3 = function() {
+export function map_3() {
   var map = 
   [
     [1,2,0,1],
@@ -39,7 +39,7 @@ Map.map_3 = function() {
   return map;
 };
 
-Map.map_4 = function() {
+export function map_4() {
   var map = 
   [
     [1,2,0,1,3,4],
@@ -53,7 +53,7 @@ Map.map_4 = function() {
   return map;
 };
 
-Map.map_default = function() {
+export function map_default() {
   var map = 
   [
     [0,1,2,3,4,5,0,1,2,3],
@@ -67,7 +67,6 @@ Map.map_default = function() {
     [0,1,1,3,4,0,0,1,2,3],
     [4,1,2,2,0,5,0,1,2,3],
   ];
-
 
   return map;
 };
