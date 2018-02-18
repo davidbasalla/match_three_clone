@@ -179,7 +179,7 @@ class GemManipulator {
       // Not sure how or why this works... :/
       for(var x = 0; x < _this.board.width; x++){
         for(var y = _this.board.height; y >= -(_this.board.height); y--){
-          gem = _this.board.find_gem_by_position([x, y]);
+          const gem = _this.board.find_gem_by_position([x, y]);
           if (gem){
             if(_this.board.space_below_gem_is_free(gem)){
               move_promises.push(_this.drop_gem(gem))

@@ -45515,8 +45515,6 @@ class Game {
   
     var parsed_map = __WEBPACK_IMPORTED_MODULE_3__map_parser__["a" /* default */].parse(this.map);
 
-    console.log(parsed_map)
-
     this.board = new __WEBPACK_IMPORTED_MODULE_0__board__["a" /* default */](parsed_map["width"], 
                            parsed_map["height"], 
                            parsed_map["gems"], 
@@ -45812,6 +45810,8 @@ class MatchingShapeFinder {
 
   matching_gems(gem, horizontal_or_vertical){
     var matching_gems = [gem];
+
+    let vector_1, vector_2;
 
     if (horizontal_or_vertical == "horizontal"){
       vector_1 = [0, 1]
@@ -48187,7 +48187,7 @@ class GemManipulator {
       // Not sure how or why this works... :/
       for(var x = 0; x < _this.board.width; x++){
         for(var y = _this.board.height; y >= -(_this.board.height); y--){
-          gem = _this.board.find_gem_by_position([x, y]);
+          const gem = _this.board.find_gem_by_position([x, y]);
           if (gem){
             if(_this.board.space_below_gem_is_free(gem)){
               move_promises.push(_this.drop_gem(gem))

@@ -47,6 +47,8 @@ class MatchingShapeFinder {
   matching_gems(gem, horizontal_or_vertical){
     var matching_gems = [gem];
 
+    let vector_1, vector_2;
+
     if (horizontal_or_vertical == "horizontal"){
       vector_1 = [0, 1]
       vector_2 = [0, -1]
