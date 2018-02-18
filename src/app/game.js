@@ -28,8 +28,6 @@ class Game {
   
     var parsed_map = MapParser.parse(this.map);
 
-    console.log(parsed_map)
-
     this.board = new Board(parsed_map["width"], 
                            parsed_map["height"], 
                            parsed_map["gems"], 

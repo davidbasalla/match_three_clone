@@ -45701,10 +45701,8 @@ class Board {
   }
 
   draw() {
-    console.log("DRAWING")
     var _this = this;
     __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.each(this.active_gems(), function(gem) {
-      console.log(_this.canvas)
       _this.canvas.add(gem.shape);
     })
   }

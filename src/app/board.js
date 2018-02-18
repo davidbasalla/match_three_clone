@@ -54,10 +54,8 @@ class Board {
   }
 
   draw() {
-    console.log("DRAWING")
     var _this = this;
     _.each(this.active_gems(), function(gem) {
-      console.log(_this.canvas)
       _this.canvas.add(gem.shape);
     })
   }
