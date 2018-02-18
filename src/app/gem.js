@@ -22,6 +22,7 @@ class Gem {
       fill: this.color,
       width: this.width,
       height: this.height,
+      selectable: false,
     });
   }
 
