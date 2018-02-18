@@ -20,5 +20,10 @@ module.exports = {
       // (with more entries, this ensures that no other module
       //  goes into the vendor chunk)
     })
-  ]
+  ],
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    port: 8080,
+  }
 };
