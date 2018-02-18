@@ -10,6 +10,7 @@ Uses the following libraries:
 - lodash
 - fabric
 - webpack
+- react
 
 ## Development
 

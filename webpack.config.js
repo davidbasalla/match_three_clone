@@ -21,6 +21,20 @@ module.exports = {
       //  goes into the vendor chunk)
     })
   ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['react']
+          }
+        }
+      }
+    ]
+  },
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
