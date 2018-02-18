@@ -1,4 +1,5 @@
 import Shape from './shape'
+import _ from 'lodash';
 
 class MatchingShapeFinder {
   constructor(board, logger){

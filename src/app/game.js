@@ -27,6 +27,9 @@ class Game {
     this.canvas.on('mouse:up', function(event){_this.handle_mouse_up(event)});
   
     var parsed_map = MapParser.parse(this.map);
+
+    console.log(parsed_map)
+
     this.board = new Board(parsed_map["width"], 
                            parsed_map["height"], 
                            parsed_map["gems"], 

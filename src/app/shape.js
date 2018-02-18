@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 class Shape {
   constructor(gems=[]) {
     this.gems = gems;

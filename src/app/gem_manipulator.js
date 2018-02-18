@@ -1,4 +1,5 @@
 import MatchedGemCounter from './matched_gem_counter'
+import _ from 'lodash'
 
 class GemManipulator {
   constructor(board, canvas, logger, matched_gems_callback, turn_callback, reset_turn_callback){

@@ -9,6 +9,7 @@
     "webpack": "^3.11.0"
   },
   "dependencies": {
-    "fabric": "^2.0.1"
+    "fabric": "^2.0.1",
+    "lodash": "^4.17.5"
   }
 }
