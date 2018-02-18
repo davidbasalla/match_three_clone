@@ -125,7 +125,7 @@ class Game {
 
     ReactDOM.render(
       <ScoreDisplay 
-        count={ this.gem_manipulator.matched_gem_counter.count() }
+        score={ this.gem_manipulator.matched_gem_counter.count() }
         matches={ this.gem_manipulator.matched_gem_counter.matched_gems }
         turn={this.turn_count}
       />,
