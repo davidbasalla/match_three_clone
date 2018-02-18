@@ -6,7 +6,8 @@
   "author": "David Basalla <davidbasalla@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "webpack": "^3.11.0"
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
     "fabric": "^2.0.1",
